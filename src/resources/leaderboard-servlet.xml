@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"> -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"  
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  
+			   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			   http://www.springframework.org/schema/context
+			   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			   http://www.springframework.org/schema/webflow-config
+			   http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+                           http://www.springframework.org/schema/task
+			   http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+
+  <!-- for processing annotations, largely as ActionForward style Controllers -->
+  <context:component-scan base-package="com.myrunning.leaderboard" />
+  <context:annotation-config/>
+
+  <!-- for handling @Async and @Scheduled annotations -->
+  <!-- see http://www.springframework.org/schema/task/spring-task.xsd 
+       keep-alive and rejection-policy -->
+  <task:annotation-driven/>
+  <!--
+  <task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
+  <task:executor id="myExecutor" pool-size="5"/>
+  <task:scheduler id="myScheduler" pool-size="10"/>
+  -->
+
+  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+
+
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver"/>
+
+
+  <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">  
+    <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
+  </bean> 
+  
+
+  <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+    <property name="mediaTypes">
+      <map>
+	<entry key="json" value="application/json"/>
+	<entry key="xml" value="application/xml"/>
+	<entry key="htm" value="text/html"/>
+      </map>
+    </property>
+    <property name="viewResolvers">
+      <list>
+	<ref bean="tilesViewResolver" />
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+      </list>
+    </property>
+    <property name="defaultViews">
+      <list>
+	<bean class="com.myrunning.leaderboard.view.RDBMarshallingView">
+          <property name="marshaller">
+            <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+	      <property name="autodetectAnnotations" value="true" />
+	    </bean>
+          </property>
+	</bean>
+	<bean class="com.myrunning.leaderboard.view.RDBJsonMappingView" />
+      </list>
+    </property>
+    <property name="defaultContentType" ref="htmMediaType" />
+    <property name="ignoreAcceptHeader" value="true" />
+  </bean>
+
+  <bean id="htmMediaType" class="org.springframework.http.MediaType">
+    <constructor-arg value="text"/>
+    <constructor-arg value="html"/>
+  </bean>
+
+
+  <!-- webflow stuff -->
+  <bean id="registrationFlowController"
+	class="org.springframework.webflow.mvc.servlet.FlowController">
+    <property name="flowExecutor" ref="flowExecutor"/>
+    <property name="flowHandlerAdapter" ref="myFlowHandlerAdapter" />
+<!--
+    <property name="flowUrlHandler">
+      <bean class="org.springframework.webflow.context.servlet.DefaultFlowUrlHandler" />
+    </property>
+-->
+  </bean>
+
+
+  <bean id="registrationController" class="com.myrunning.leaderboard.webflow.RegistrationController" />
+
+  <bean id="person" class="com.myrunning.leaderboard.model.Person" />
+
+  
+  <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry"/>
+
+  <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
+    <webflow:flow-location path="/WEB-INF/addRegistrationFlow.xml"/>
+  </webflow:flow-registry>
+  
+  <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator"/>
+  
+  <bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+    <property name="viewResolvers" ref="tilesViewResolver"/>
+  </bean>
+
+  <bean id="myFlowHandlerAdapter" class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+    <property name="flowExecutor" ref="flowExecutor" />
+  </bean>
+
+  <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+    <property name="flowRegistry" ref="flowRegistry"/>
+    <property name="order" value="0"/>
+  </bean>
+
+  <!-- Enables plain Controllers (e.g. FlowController) -->
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+  <!-- Enables annotated Controllers -->
+  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+
+
+  <!-- for events -->
+  <bean id="eventValidator"
+	class="com.myrunning.leaderboard.validation.EventValidator" />
+
+  <bean id="addEventFormController"
+	class="com.myrunning.leaderboard.web.AddEventFormController">
+    <property name="formView"><value>.addEventForm_dashboard</value></property>
+    <property name="successView"><value>.editEventFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editEventValidator"
+	class="com.myrunning.leaderboard.validation.EditEventValidator" />
+
+  <bean id="editEventFormController"
+	class="com.myrunning.leaderboard.web.EditEventFormController">
+    <property name="formView"><value>.editEventForm_dashboard</value></property>
+    <property name="successView"><value>.editEventFormSubmitted_dashboard</value></property>
+  </bean>
+
+
+  <!-- for courses -->
+  <bean id="courseValidator"
+	class="com.myrunning.leaderboard.validation.CourseValidator" />
+
+  <bean id="addCourseFormController"
+	class="com.myrunning.leaderboard.web.AddCourseFormController">
+    <property name="formView"><value>.addCourseForm_dashboard</value></property>
+    <property name="successView"><value>.editCourseFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editCourseValidator"
+	class="com.myrunning.leaderboard.validation.EditCourseValidator" />
+
+  <bean id="editCourseFormController"
+	class="com.myrunning.leaderboard.web.EditCourseFormController">
+    <property name="formView"><value>.editCourseForm_dashboard</value></property>
+    <property name="successView"><value>.editCourseFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <!-- for divisions -->
+  <bean id="divisionValidator"
+	class="com.myrunning.leaderboard.validation.DivisionValidator" />
+
+  <bean id="addDivisionFormController"
+	class="com.myrunning.leaderboard.web.AddDivisionFormController">
+    <property name="formView"><value>.addDivisionForm_dashboard</value></property>
+    <property name="successView"><value>.editDivisionFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editDivisionValidator"
+	class="com.myrunning.leaderboard.validation.EditDivisionValidator" />
+
+  <bean id="editDivisionFormController"
+	class="com.myrunning.leaderboard.web.EditDivisionFormController">
+    <property name="formView"><value>.editDivisionForm_dashboard</value></property>
+    <property name="successView"><value>.editDivisionFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <!-- for control points -->
+  <bean id="controlPointValidator"
+	class="com.myrunning.leaderboard.validation.ControlPointValidator" />
+
+  <bean id="addControlPointFormController"
+	class="com.myrunning.leaderboard.web.AddControlPointFormController">
+    <property name="formView"><value>.addControlPointForm_dashboard</value></property>
+    <property name="successView"><value>.editControlPointFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editControlPointValidator"
+	class="com.myrunning.leaderboard.validation.EditControlPointValidator" />
+
+  <bean id="editControlPointFormController"
+	class="com.myrunning.leaderboard.web.EditControlPointFormController">
+    <property name="formView"><value>.editControlPointForm_dashboard</value></property>
+    <property name="successView"><value>.editControlPointFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editCpOrderValidator"
+	class="com.myrunning.leaderboard.validation.EditCpOrderValidator" />
+
+  <bean id="editCpOrderController"
+	class="com.myrunning.leaderboard.web.EditCpOrderController">
+    <property name="validator" ref="editCpOrderValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.CpOrderShift</value></property>
+    <property name="commandName"><value>cpOrderShift</value></property>
+    <property name="formView"><value>.listControlPoints_view</value></property>
+    <property name="successView"><value>.listControlPoints</value></property>
+  </bean>
+
+  <!-- for competitors -->
+  <bean id="competitorValidator"
+	class="com.myrunning.leaderboard.validation.CompetitorValidator" />
+
+  <bean id="addCompetitorFormController"
+	class="com.myrunning.leaderboard.web.AddCompetitorFormController">
+    <property name="validator" ref="competitorValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Competitor</value></property>
+    <property name="commandName"><value>competitor</value></property>
+    <property name="formView"><value>.addCompetitorForm_dashboard</value></property>
+    <property name="successView"><value>.editCompetitorFormSubmitted_dashboard</value></property>
+    <property name="competitorService" ref="competitorService" />
+  </bean>
+
+  <bean id="editCompetitorValidator"
+	class="com.myrunning.leaderboard.validation.EditCompetitorValidator" />
+
+  <bean id="editCompetitorFormController"
+	class="com.myrunning.leaderboard.web.EditCompetitorFormController">
+    <property name="validator" ref="editCompetitorValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Competitor</value></property>
+    <property name="commandName"><value>competitor</value></property>
+    <property name="formView"><value>.editCompetitorForm_dashboard</value></property>
+    <property name="successView"><value>.editCompetitorFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <!-- for admins -->
+  <bean id="adminValidator"
+        class="com.myrunning.leaderboard.validation.AdminValidator" />
+
+  <bean id="addAdminFormController"
+        class="com.myrunning.leaderboard.web.AddAdminFormController">
+    <property name="validator" ref="adminValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Admin</value></property>
+    <property name="commandName"><value>admin</value></property>
+    <property name="formView"><value>.addAdminForm_dashboard</value></property>
+    <property name="successView"><value>.editAdminFormSubmitted_dashboard</value></property>
+    <property name="adminService" ref="adminService" />
+  </bean>
+
+  <bean id="editAdminValidator"
+        class="com.myrunning.leaderboard.validation.EditAdminValidator" />
+
+  <bean id="editAdminFormController"
+        class="com.myrunning.leaderboard.web.EditAdminFormController">
+    <property name="validator" ref="editAdminValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Admin</value></property>
+    <property name="commandName"><value>admin</value></property>
+    <property name="formView"><value>.editAdminForm_dashboard</value></property>
+    <property name="successView"><value>.editAdminFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <!-- for logins -->
+  <bean id="loginValidator"
+	class="com.myrunning.leaderboard.validation.LoginValidator" />
+
+  <bean id="loginFormController"
+	class="com.myrunning.leaderboard.web.LoginFormController">
+    <property name="validator" ref="loginValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Credentials</value></property>
+    <property name="commandName"><value>credentials</value></property>
+    <property name="formView"><value>.loginForm_dashboard</value></property>
+    <property name="successView"><value>.loginSuccess_dashboard</value></property>
+  </bean>
+
+  <!-- for teams -->
+  <bean id="teamValidator"
+	class="com.myrunning.leaderboard.validation.TeamValidator" />
+
+  <bean id="addTeamFormController"
+	class="com.myrunning.leaderboard.web.AddTeamFormController">
+    <property name="formView"><value>.addTeamForm_dashboard</value></property>
+    <property name="successView"><value>.editTeamFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <bean id="editTeamValidator"
+	class="com.myrunning.leaderboard.validation.EditTeamValidator" />
+
+  <bean id="editTeamFormController"
+	class="com.myrunning.leaderboard.web.EditTeamFormController">
+    <property name="formView"><value>.editTeamForm_dashboard</value></property>
+    <property name="successView"><value>.editTeamFormSubmitted_dashboard</value></property>
+  </bean>
+
+  <!-- for cp visits -->
+  <bean id="cpVisitValidator"
+	class="com.myrunning.leaderboard.validation.CpVisitValidator">
+    <property name="cpVisitService" ref="cpVisitService" />
+    <property name="controlPointDao" ref="controlPointDao" />
+    <property name="teamDao" ref="teamDao" />
+  </bean>
+
+  <bean id="addCpVisitFormController"
+	class="com.myrunning.leaderboard.web.AddCpVisitFormController">
+    <property name="formView"><value>.addCpVisitForm_dashboard</value></property>
+    <property name="successView"><value>.editCpVisitFormSubmitted_view</value></property>
+  </bean>
+
+  <bean id="editCpVisitValidator"
+	class="com.myrunning.leaderboard.validation.EditCpVisitValidator">
+    <property name="cpVisitService" ref="cpVisitService" />
+    <property name="controlPointDao" ref="controlPointDao" />
+    <property name="teamDao" ref="teamDao" />
+  </bean>
+
+  <bean id="editCpVisitFormController"
+	class="com.myrunning.leaderboard.web.EditCpVisitFormController">
+    <property name="formView"><value>.editCpVisitForm_dashboard</value></property>
+    <property name="successView"><value>.editCpVisitFormSubmitted_view</value></property>
+  </bean>
+
+  <!-- for batch cp visits -->
+  <bean id="cpVisitBatchValidator"
+	class="com.myrunning.leaderboard.validation.CpVisitBatchValidator">
+    <property name="cpVisitService" ref="cpVisitService" />
+    <property name="controlPointDao" ref="controlPointDao" />
+    <property name="teamDao" ref="teamDao" />
+  </bean>
+  
+  <bean id="cpVisitBatchFormController"
+	class="com.myrunning.leaderboard.web.CpVisitBatchFormController">
+    <property name="formView"><value>.editCpVisitBatchForm_dashboard</value></property>
+    <property name="successView"><value>.editCpVisitBatchFormSubmitted_view</value></property>
+  </bean>
+
+  <!-- for comparators -->
+  <bean id="comparatorValidator"
+	class="com.myrunning.leaderboard.validation.ComparatorValidator" />
+
+  <bean id="addComparatorFormController"
+	class="com.myrunning.leaderboard.web.AddComparatorFormController">
+    <property name="validator" ref="comparatorValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Comparator</value></property>
+    <property name="commandName"><value>comparator</value></property>
+    <property name="formView"><value>.addComparatorForm_dashboard</value></property>
+    <property name="successView"><value>.editComparatorFormSubmitted_dashboard</value></property>
+    <property name="comparatorService" ref="comparatorService" />
+  </bean>
+
+  <bean id="editComparatorValidator"
+	class="com.myrunning.leaderboard.validation.EditComparatorValidator" />
+
+  <bean id="editComparatorFormController"
+	class="com.myrunning.leaderboard.web.EditComparatorFormController">
+    <property name="validator" ref="editComparatorValidator" />
+    <property name="commandClass"><value>com.myrunning.leaderboard.model.Comparator</value></property>
+    <property name="commandName"><value>comparator</value></property>
+    <property name="formView"><value>.editComparatorForm_dashboard</value></property>
+    <property name="successView"><value>.editComparatorFormSubmitted_dashboard</value></property>
+  </bean>
+
+
+  <!-- you can have more than one handler defined -->
+  <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <value>
+	/editCpOrder.htm=editCpOrderController
+	/addCompetitor.htm=addCompetitorFormController
+	/editCompetitor.htm=editCompetitorFormController
+	/addAdmin.htm=addAdminFormController
+	/editAdmin.htm=editAdminFormController
+<!--	/login.htm=loginFormController -->
+	/addComparator.htm=addComparatorFormController
+	/editComparator.htm=editComparatorFormController
+	/registration.htm=registrationFlowController 
+      </value>
+    </property>
+    <property name="order" value="1" />
+  </bean>
+
+</beans>

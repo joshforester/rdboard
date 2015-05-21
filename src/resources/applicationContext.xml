@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  
+			   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/tx  
+			   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+                           http://www.springframework.org/schema/aop
+			   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+
+  <!-- load tiles -->
+  <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+    <property name="definitions">  
+      <list>
+	<value>/WEB-INF/tiles-defs.xml</value>
+      </list>
+    </property>
+  </bean>
+
+  <!-- load iBatis -->
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/leaderboard" />
+    <property name="username" value="leaderboard" />
+    <property name="password" value="1337erboard" />
+    <property name="validationQuery" value="SELECT 1" />
+    <property name="testOnBorrow" value="true" />
+    <!-- for connection pool -->
+    <property name="initialSize" value="10" />
+    <!-- dreamhost environment -->
+    <!--
+    <property name="url" value="jdbc:mysql://mysql.rdboard.com:3306/lboard" />
+    <property name="username" value="leaderboard" />
+    <property name="password" value="L33d3rPw!" />
+    -->
+  </bean>
+
+  <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+    <property name="configLocation" value="/WEB-INF/classes/resources/sql-map-config.xml" />
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+
+  <bean id="lastInsertIdDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.LastInsertIdSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="teamDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.TeamSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="eventDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.EventSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="courseDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.CourseSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="divisionDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.DivisionSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="controlPointDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.ControlPointSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="personDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.PersonSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+    <property name="authorityDao" ref="authorityDao" />
+  </bean>
+
+  <bean id="competitorDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.CompetitorSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="adminDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.AdminSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="cpVisitDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.CpVisitSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+    <property name="teamDao" ref="teamDao" />
+    <property name="courseDao" ref="courseDao" />
+    <property name="controlPointDao" ref="controlPointDao" />
+  </bean>
+
+  <bean id="rankDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.RankSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="updateDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.UpdateSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="comparatorDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.ComparatorSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="teamInstanceRelDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.TeamInstanceRelSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="dataResourceDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.DataResourceSqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="authorityDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.AuthoritySqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+  <bean id="identityDao" class="com.myrunning.leaderboard.db.dao.sqlmapdao.IdentitySqlMapClientDao">
+    <property name="sqlMapClient" ref="sqlMapClient" />
+  </bean>
+
+
+  
+  <!-- configure non-iBatis beans -->
+
+  <!-- for handling domain object access control -->
+  <bean id="dataAccessFilter" class="com.myrunning.leaderboard.db.DataAccessFilter">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+  </bean>
+
+  <!-- for handling authentications -->
+  <bean id="authenticatedUserFilter" class="com.myrunning.leaderboard.global.AuthenticatedUserFilter">
+    <property name="adminDao" ref="adminDao" />
+  </bean>
+
+  <!-- for handling verifications -->
+  <bean id="personVerifier" class="com.myrunning.leaderboard.validation.PersonVerifier">
+    <property name="personDao" ref="personDao" />
+  </bean>
+
+  <!-- for correlating data objects -->
+  <bean id="dataCorrelator" class="com.myrunning.leaderboard.model.stats.DataCorrelator">
+    <property name="identityDao" ref="identityDao" />
+    <property name="personDao" ref="personDao" />
+  </bean>
+
+
+  <!-- configure services -->
+  <bean id="heyWhatsThatService" class="com.myrunning.leaderboard.services.svc.HeyWhatsThatServiceLocal">
+  </bean>
+
+  <bean id="teamService" class="com.myrunning.leaderboard.services.svc.TeamServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="teamDao" ref="teamDao" />
+  </bean>
+
+  <bean id="comparatorService" class="com.myrunning.leaderboard.services.svc.ComparatorServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="comparatorDao" ref="comparatorDao" />
+  </bean>
+
+  <bean id="courseService" class="com.myrunning.leaderboard.services.svc.CourseServiceLocal">
+    <property name="rankService" ref="rankService" />
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="courseDao" ref="courseDao" />
+    <property name="teamDao" ref="teamDao" />
+    <property name="controlPointDao" ref="controlPointDao" />
+    <property name="cpVisitDao" ref="cpVisitDao" />
+    <property name="comparatorDao" ref="comparatorDao" />
+  </bean>
+
+  <bean id="controlPointService" class="com.myrunning.leaderboard.services.svc.ControlPointServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="controlPointDao" ref="controlPointDao" />
+    <property name="heyWhatsThatService" ref="heyWhatsThatService" />
+  </bean>
+
+  <bean id="divisionService" class="com.myrunning.leaderboard.services.svc.DivisionServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="divisionDao" ref="divisionDao" />
+  </bean>
+
+  <bean id="eventService" class="com.myrunning.leaderboard.services.svc.EventServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="eventDao" ref="eventDao" />
+  </bean>
+
+  <bean id="cpVisitService" class="com.myrunning.leaderboard.services.svc.CpVisitServiceLocal">
+    <property name="rankService" ref="rankService" />
+    <property name="courseService" ref="courseService" />
+    <property name="updateService" ref="updateService" />
+    <property name="courseDao" ref="courseDao" />
+    <property name="cpVisitService" ref="cpVisitService" />
+    <property name="cpVisitDao" ref="cpVisitDao" />
+  </bean>
+
+  <bean id="rankService" class="com.myrunning.leaderboard.services.svc.RankServiceLocal">
+    <property name="rankDao" ref="rankDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+  </bean>
+
+  <bean id="adminService" class="com.myrunning.leaderboard.services.svc.AdminServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="adminDao" ref="adminDao" />
+    <property name="identityDao" ref="identityDao" />
+  </bean>
+
+  <bean id="competitorService" class="com.myrunning.leaderboard.services.svc.CompetitorServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="personDao" ref="personDao" />
+    <property name="competitorDao" ref="competitorDao" />
+    <property name="identityDao" ref="identityDao" />
+  </bean>
+
+  <bean id="registrationService" class="com.myrunning.leaderboard.services.svc.RegistrationServiceLocal">
+    <property name="dataResourceDao" ref="dataResourceDao" />
+    <property name="lastInsertIdDao" ref="lastInsertIdDao" />
+    <property name="teamDao" ref="teamDao" />
+    <property name="teamInstanceRelDao" ref="teamInstanceRelDao" />
+    <property name="competitorDao" ref="competitorDao" />
+    <property name="competitorService" ref="competitorService" />
+    <property name="teamService" ref="teamService" />
+  </bean>
+
+  <bean id="updateService" class="com.myrunning.leaderboard.services.svc.UpdateServiceLocal">
+    <property name="updateDao" ref="updateDao" />
+    <property name="rankService" ref="rankService" />
+    <property name="cpVisitService" ref="cpVisitService" />
+  </bean>
+
+
+  <!-- configure transaction management -->
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+      <tx:method name="*" />
+      <tx:method name="add*" timeout="1000" />
+    </tx:attributes>
+  </tx:advice>
+				       
+  <aop:config>
+    <aop:pointcut id="serviceMethods"
+		  expression="execution(* com.myrunning.leaderboard.services.svc.*.*(..))" />
+    <aop:advisor advice-ref="txAdvice"
+		 pointcut-ref="serviceMethods" />
+  </aop:config>
+
+
+  <!--
+  Responsible for making available a properties file.  Originally in servlet.xml though, I figured it was better suited to be here if it works...
+  -->
+  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basenames">
+      <list>
+	<value>/WEB-INF/classes/resources/application</value>
+	<value>/WEB-INF/classes/resources/images</value>
+      </list>
+    </property>
+    <property name="fallbackToSystemLocale" value="false" /> 
+  </bean>
+
+  
+</beans>

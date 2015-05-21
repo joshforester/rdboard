@@ -1,0 +1,11 @@
+SET FOREIGN_KEY_CHECKS=0;
+CREATE TABLE `leaderboard`.`IDENTITY` (
+  `id` INTEGER UNSIGNED NOT NULL,
+  `is_deleted` ENUM('default','no','yes')  NOT NULL DEFAULT 'no',
+  PRIMARY KEY(`id`),
+  CONSTRAINT `IDENTITY_id_fkc` FOREIGN KEY `IDENTITY_id_fkc` (`id`)
+    REFERENCES `DATA_RESOURCE` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+)
+TYPE = InnoDB;

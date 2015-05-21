@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="TeamInstanceRel">
+
+  <typeAlias alias="teamInstanceRel" type="com.myrunning.leaderboard.model.TeamInstanceRel"/>
+
+  <resultMap id="teamInstanceRelResult" class="teamInstanceRel">
+    <result property="teamId" column="team_id" />
+    <result property="competitorId" column="competitor_id" />
+    <result property="isCaptain" column="is_captain" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+
+  <select id="getTeamInstanceRelByCompetitorId" resultMap="teamInstanceRelResult" parameterClass="string">
+    SELECT *
+    FROM Team_Instance_Rel
+    WHERE competitor_id = #value#
+  </select>
+
+  <select id="getTeamInstanceRelsByTeamId" resultMap="teamInstanceRelResult" parameterClass="string">
+    SELECT *
+    FROM Team_Instance_Rel
+    WHERE team_id = #value#
+  </select>
+
+  <update id="updateTeamInstanceRel" parameterClass="teamInstanceRel">
+    UPDATE Team_Instance_Rel
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="teamId">team_id = #teamId#</isNotNull>
+      <isNotNull prepend=", " property="isCaptain">is_captain = #isCaptain#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE competitor_id = #competitorId#
+  </update>
+
+  <insert id="insertTeamInstanceRel" parameterClass="teamInstanceRel">
+    INSERT INTO Team_Instance_Rel (team_id, competitor_id, is_captain, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="teamId">#teamId#</isNotNull>
+      <isNull prepend=", " property="teamId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="competitorId">#competitorId#</isNotNull>
+      <isNull prepend=", " property="competitorId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isCaptain">#isCaptain#</isNotNull>
+      <isNull prepend=", " property="isCaptain">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteTeamInstanceRelsByTeamId" parameterClass="string">
+    DELETE
+    FROM Team_Instance_Rel
+    WHERE team_id = #value#
+  </delete>
+
+  <delete id="deleteTeamInstanceRelByCompetitorId" parameterClass="string">
+    DELETE
+    FROM Team_Instance_Rel
+    WHERE competitor_id = #value#
+  </delete>
+
+</sqlMap>

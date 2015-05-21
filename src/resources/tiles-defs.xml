@@ -1,0 +1,796 @@
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<!--
+File: tiles-defs.xml
+Author: Joshua Forester
+Date: 2009/08/05
+Description: Tiles definitions file for all of the site.
+-->
+
+<tiles-definitions>
+
+    <definition name=".dashboardLayout" template="/views/LayoutDashboard.jsp">
+      <put-attribute name="title" value="CHANGE ME TITLE" />
+      <put-attribute name="ProcessingHeader" value="/views/ProcessingHeader.jsp" />
+      <put-attribute name="DoctypeHeader" value="/views/DoctypeHeader.jsp" />
+      <put-attribute name="Link1" value=".DefaultContent" />
+      <put-attribute name="Link2" value="/views/LinkRDB.jsp" />
+      <put-attribute name="Meta" value="/views/Meta.jsp" />
+      <put-attribute name="Script" value=".DefaultScript" />
+      <put-attribute name="Body" value="/views/Body.jsp" />
+      <put-attribute name="TopAds" value="/views/MainSlideshow.jsp" />
+      <put-attribute name="MainMenu" value=".DefaultMainMenu" />
+      <put-attribute name="SubMenu" value=".DefaultSubMenu" />
+      <put-attribute name="ContentTopLt1" value=".DefaultNotice" />
+      <put-attribute name="ContentTopLt2" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt3" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt4" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt5" value=".DefaultContent" />
+      <put-attribute name="ContentLt1" value=".DefaultContent" />
+      <put-attribute name="ContentLt2" value=".DefaultContent" />
+      <put-attribute name="ContentLt3" value=".DefaultContent" />
+      <put-attribute name="ContentLt4" value=".DefaultContent" />
+      <put-attribute name="ContentLt5" value=".DefaultContent" />
+      <put-attribute name="ContentMd1" value=".DefaultContent" />
+      <put-attribute name="ContentMd2" value=".DefaultContent" />
+      <put-attribute name="ContentMd3" value=".DefaultContent" />
+      <put-attribute name="ContentMd4" value=".DefaultContent" />
+      <put-attribute name="ContentMd5" value=".DefaultContent" />
+      <put-attribute name="ContentRt1" value=".DefaultContent" />
+      <put-attribute name="ContentRt2" value=".DefaultContent" />
+      <put-attribute name="ContentRt3" value="/views/liveCoverageSponsor.jsp" />
+      <put-attribute name="ContentRt4" value="/views/addThisVertical.jsp" />
+      <put-attribute name="ContentRt5" value=".DefaultContent" />
+      <put-attribute name="GoogleAnalytics" value="/views/googleAnalytics.jsp" />
+      <put-attribute name="Footer1" value="/views/Footer.jsp" />
+      <put-attribute name="Footer2" value=".DefaultContent" />
+    </definition>
+
+    <definition name=".viewLayout" template="/views/LayoutView.jsp">
+      <put-attribute name="title" value="CHANGE ME TITLE" />
+      <put-attribute name="ProcessingHeader" value="/views/ProcessingHeader.jsp" />
+      <put-attribute name="DoctypeHeader" value="/views/DoctypeHeader.jsp" />
+      <put-attribute name="Link1" value=".DefaultContent" />
+      <put-attribute name="Link2" value="/views/LinkRDB.jsp" />
+      <put-attribute name="Meta" value="/views/Meta.jsp" />
+      <put-attribute name="Script" value=".DefaultScript" /> 
+      <put-attribute name="Body" value="/views/Body.jsp" /> 
+      <put-attribute name="TopAds" value="/views/MainSlideshow.jsp" />
+      <put-attribute name="MainMenu" value=".DefaultMainMenu" />
+      <put-attribute name="SubMenu" value=".DefaultSubMenu" />
+      <put-attribute name="ContentTopLt1" value=".DefaultNotice" />
+      <put-attribute name="ContentTopLt2" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt3" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt4" value=".DefaultContent" />
+      <put-attribute name="ContentTopLt5" value=".DefaultContent" />
+      <put-attribute name="GoogleAnalytics" value="/views/googleAnalytics.jsp" />
+      <put-attribute name="Footer1" value="/views/addThisHorizontal.jsp" />
+      <put-attribute name="Footer2" value="/views/Footer.jsp" />
+    </definition>
+
+    <definition name=".rawLayout" template="/views/LayoutRaw.jsp">
+      <put-attribute name="title" value="CHANGE ME TITLE" />
+      <put-attribute name="ProcessingHeader" value="/views/ProcessingHeader.jsp" />
+      <put-attribute name="DoctypeHeader" value="/views/DoctypeHeader.jsp" /> 
+      <put-attribute name="Link1" value=".DefaultContent" />
+      <put-attribute name="Link2" value="/views/LinkRDB.jsp" />
+      <put-attribute name="Meta" value="/views/Meta.jsp" /> 
+      <put-attribute name="Script" value=".DefaultScript" /> 
+      <put-attribute name="Body" value="/views/Body.jsp" /> 
+      <put-attribute name="ContentTopLt1" value=".DefaultContent" /> 
+      <put-attribute name="ContentTopLt2" value=".DefaultContent" /> 
+      <put-attribute name="ContentTopLt3" value=".DefaultContent" /> 
+      <put-attribute name="ContentTopLt4" value=".DefaultContent" /> 
+      <put-attribute name="ContentTopLt5" value=".DefaultContent" /> 
+      <put-attribute name="GoogleAnalytics" value="/views/googleAnalytics.jsp" />
+      <put-attribute name="Footer1" value="/views/Footer.jsp" />
+    </definition>
+    
+    <definition name=".DefaultScript" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/rdb.js" />
+      </put-list-attribute>
+    </definition>
+
+    <definition name=".DefaultMainMenu" template="/views/MainMenu.jsp">
+      <put-attribute name="mainMenuItem" value="home" />
+    </definition>
+
+    <definition name=".DefaultSubMenu" template="/views/SubMenu.jsp">
+      <put-attribute name="mainMenuItem" value="home" />
+      <put-attribute name="subMenuItem" value="home" />
+    </definition>
+
+    <definition name=".DefaultNotice" template="/views/NoticeWelcome.jsp">
+      <put-attribute name="pageTitle" value="Page Title" />
+      <put-attribute name="submitUrl" value="/d/submitUrl.htm" />
+    </definition>
+
+    <definition name=".DefaultContent" template="/views/Content.jsp">
+      <put-attribute name="pageTitle" value="Page Title" />
+      <put-attribute name="submitUrl" value="/d/submitUrl.htm" />
+    </definition>
+
+
+    <!-- Views -->
+    <definition name=".releasenotes_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Release Notes" />
+      <put-attribute name="ContentTopLt2" value="/views/releasenotes.jsp" />
+    </definition>
+    <definition name=".releasenotes_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Release Notes" />
+      <put-attribute name="ContentTopLt2" value="/views/releasenotes.jsp" />
+    </definition>
+    <definition name=".releasenotes_view" extends=".viewLayout">
+      <put-attribute name="title" value="Release Notes" />
+      <put-attribute name="ContentTopLt2" value="/views/releasenotes.jsp" />
+    </definition>
+    <definition name=".releasenotes_raw" extends=".rawLayout">
+      <put-attribute name="title" value="Release Notes" />
+      <put-attribute name="ContentTopLt2" value="/views/releasenotes.jsp" />
+    </definition>
+
+    <definition name=".leaderboardLegend_view" extends=".viewLayout">
+      <put-attribute name="title" value="Leaderboard Legend" />
+      <put-attribute name="ContentTopLt2" value="/views/leaderboardLegend.jsp" />
+    </definition>
+
+    <definition name=".accessDenied_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Access Denied" />
+      <put-attribute name="ContentTopLt2" value="/views/accessDenied.jsp" />
+    </definition>
+
+    <definition name=".ownershiperror_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Ownership Error" />
+      <put-attribute name="ContentTopLt2" value="/views/ownershiperror.jsp" />
+    </definition>
+
+    <definition name=".noleaderboardstodisplay_dashboard" extends=".rawLayout">
+      <put-attribute name="title" value="No Leaderboard" />
+      <put-attribute name="ContentTopLt2" value="/views/noLeaderboards.jsp" />
+    </definition>
+
+    <definition name=".listLeaderboardsFull_raw" extends=".rawLayout">
+      <put-attribute name="title" value="Leaderboards - Full" />
+      <put-attribute name="Script" value=".ScriptListLeaderboardsFull" /> 
+      <put-attribute name="ContentTopLt2" value="/views/listLeaderboardsFull.jsp" />
+    </definition>
+
+    <definition name=".listLeaderboardsFull_view" extends=".viewLayout">
+      <put-attribute name="title" value="Leaderboards - Full" />
+      <put-attribute name="Script" value=".ScriptListLeaderboardsFull" />
+      <put-attribute name="ContentTopLt2" value="/views/listLeaderboardsFull.jsp" />
+      <put-attribute name="ContentTopLt3" value="/views/liveChat.jsp" />
+    </definition>
+
+    <definition name=".listLeaderboardsFull_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Leaderboards - Full" />
+      <put-attribute name="Link1" value="/views/LinkLbd.jsp" />
+      <put-attribute name="Script" value=".ScriptListLeaderboardsFull" />
+      <put-attribute name="ContentTopLt2" value="/views/listLeaderboardsFull.jsp" />
+      <put-attribute name="ContentTopLt3" value="/views/liveChat.jsp" /> 
+      <put-attribute name="ContentRt1" value="/views/listLbdUpdatesVertical.jsp" />
+    </definition>
+
+    <definition name=".ScriptListLeaderboardsFull" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" /> 
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/jquery-ui-1.7.2.min.js" /> 
+        <add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/lbd.js" />
+	<add-attribute value="/js/lbdupdates.js" />
+      </put-list-attribute>
+    </definition>
+
+
+
+    <definition name=".listLeaderboardsList_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Leaderboards - List" />
+      <put-attribute name="ContentTopLt2" value="/views/listLeaderboardsList.jsp" />
+    </definition>
+
+    <definition name=".listLeaderboardsShort_raw" extends=".rawLayout">
+      <put-attribute name="title" value="Leaderboards - Short" />
+      <put-attribute name="ContentTopLt2" value="/views/listLeaderboardsShort.jsp" />
+    </definition>
+
+    
+
+
+    <!-- Login -->
+    <definition name=".loginForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Login" />
+      <put-attribute name="Body" value="/views/loginBody.jsp" />
+      <put-attribute name="ContentTopLt2" value=".loginContent" />
+    </definition>
+
+    <definition name=".loginContent" template="/views/loginForm.jsp">
+      <put-attribute name="pageTitle" value="Login" />
+      <put-attribute name="submitUrl" value="/j_spring_security_check" />
+    </definition>
+
+    <definition name=".loginSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Login Success" />
+      <put-attribute name="ContentTopLt2" value="/views/loginSuccess.jsp" />
+    </definition>
+
+    <definition name=".logoutSuccess_view" extends=".viewLayout">
+      <put-attribute name="title" value="Logout" />
+      <put-attribute name="ContentTopLt2" value="/views/logoutSuccess.jsp" />
+    </definition>
+
+    <!-- Event CRUD -->
+    <definition name=".listEvents_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Events" />
+      <put-attribute name="ContentTopLt2" value="/views/listEvents.jsp" />
+    </definition>
+
+    <definition name=".addEventForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Event" />
+      <put-attribute name="Script" value=".ScriptEditEvent" />
+      <put-attribute name="ContentTopLt2" value=".addEventContent" />
+    </definition>
+
+    <definition name=".addEventContent" template="/views/editEventForm.jsp">
+      <put-attribute name="pageTitle" value="Add Event" />
+      <put-attribute name="submitUrl" value="/d/addEvent.htm" />
+    </definition>
+
+    <definition name=".editEventForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Event" />
+      <put-attribute name="Script" value=".ScriptEditEvent" />
+      <put-attribute name="ContentTopLt2" value=".editEventContent" />
+    </definition>
+    <definition name=".editEventForm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Edit Event" />
+      <put-attribute name="Script" value=".ScriptEditEvent" />
+      <put-attribute name="ContentTopLt2" value=".editEventContent" />
+    </definition>
+    <definition name=".editEventForm_raw" extends=".rawLayout">
+      <put-attribute name="title" value="Edit Event" />
+      <put-attribute name="Script" value=".ScriptEditEvent" />
+      <put-attribute name="ContentTopLt2" value=".editEventContent" />
+    </definition>
+
+    <definition name=".editEventContent" template="/views/editEventForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Event" />
+      <put-attribute name="submitUrl" value="/d/editEvent.htm" />
+    </definition>
+
+    <definition name=".ScriptEditEvent" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="/tp/local/ckeditor/ckeditor.js" />
+	<add-attribute value="/tp/local/ckeditor/adapters/jquery.js" />
+	<add-attribute value="/js/jquery.blockUI-2.29.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/event.js" />
+      </put-list-attribute>
+    </definition>
+
+    <definition name=".editEventFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Event Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editEventFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteEventConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Event Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteEventConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteEventSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Event Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteEventSuccess.jsp" />
+    </definition>
+
+
+    <!-- Course CRUD -->
+    <definition name=".listCourses_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Courses" />
+      <put-attribute name="ContentTopLt2" value="/views/listCourses.jsp" />
+    </definition>
+
+    <definition name=".addCourseForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Course" />
+      <put-attribute name="Script" value=".ScriptEditCourse" />
+      <put-attribute name="ContentTopLt2" value=".addCourseContent" />
+    </definition>
+
+    <definition name=".addCourseContent" template="/views/editCourseForm.jsp">
+      <put-attribute name="pageTitle" value="Add Course" />
+      <put-attribute name="submitUrl" value="/d/addCourse.htm" />
+    </definition>
+
+    <definition name=".editCourseForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Course" />
+      <put-attribute name="Script" value=".ScriptEditCourse" />
+      <put-attribute name="ContentTopLt2" value=".editCourseContent" />
+    </definition>
+
+    <definition name=".editCourseContent" template="/views/editCourseForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Course" />
+      <put-attribute name="submitUrl" value="/d/editCourse.htm" />
+    </definition>
+
+    <definition name=".ScriptEditCourse" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="/tp/local/ckeditor/ckeditor.js" />
+	<add-attribute value="/tp/local/ckeditor/adapters/jquery.js" />
+	<add-attribute value="/js/jquery.blockUI-2.29.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/course.js" />
+      </put-list-attribute>
+    </definition>
+
+    <definition name=".editCourseFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Course Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editCourseFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteCourseConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Course Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCourseConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteCourseSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Course Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCourseSuccess.jsp" />
+    </definition>
+
+
+    <definition name=".showDescription_view" extends=".viewLayout">
+      <put-attribute name="title" value="Course Description" />
+      <put-attribute name="ContentTopLt2" value="/views/courseDesc.jsp" />
+    </definition>
+
+
+    <!-- Division CRUD -->
+    <definition name=".listDivisions_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Divisions" />
+      <put-attribute name="ContentTopLt2" value="/views/listDivisions.jsp" />
+    </definition>
+
+    <definition name=".addDivisionForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Division" />
+      <put-attribute name="ContentTopLt2" value=".addDivisionContent" />
+    </definition>
+
+    <definition name=".addDivisionContent" template="/views/editDivisionForm.jsp">
+      <put-attribute name="pageTitle" value="Add Division" />
+      <put-attribute name="submitUrl" value="/d/addDivision.htm" />
+    </definition>
+
+    <definition name=".editDivisionForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Division" />
+      <put-attribute name="ContentTopLt2" value=".editDivisionContent" />
+    </definition>
+
+    <definition name=".editDivisionContent" template="/views/editDivisionForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Division" />
+      <put-attribute name="submitUrl" value="/d/editDivision.htm" />
+    </definition>
+
+    <definition name=".editDivisionFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Division Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editDivisionFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteDivisionConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Division Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteDivisionConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteDivisionSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Division Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteDivisionSuccess.jsp" />
+    </definition>
+
+
+    <!-- ControlPoint CRUD -->
+    <definition name=".listControlPoints_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Control Points" />
+      <put-attribute name="ContentTopLt2" value="/views/listControlPoints.jsp" />
+    </definition>
+
+    <definition name=".addControlPointForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Control Point" />
+      <put-attribute name="ContentTopLt2" value=".addControlPointContent" />
+    </definition>
+
+    <definition name=".addControlPointContent" template="/views/editControlPointForm.jsp">
+      <put-attribute name="pageTitle" value="Add Control Point" />
+      <put-attribute name="submitUrl" value="/d/addControlPoint.htm" />
+    </definition>
+
+    <definition name=".editControlPointForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Control Point" />
+      <put-attribute name="ContentTopLt2" value=".editControlPointContent" />
+    </definition>
+
+    <definition name=".editControlPointContent" template="/views/editControlPointForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Control Point" />
+      <put-attribute name="submitUrl" value="/d/editControlPoint.htm" />
+    </definition>
+
+    <definition name=".editControlPointFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Control Point Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editControlPointFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteControlPointConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Control Point Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteControlPointConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteControlPointSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Control Point Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteControlPointSuccess.jsp" />
+    </definition>
+
+
+    <!-- Competitor CRUD -->
+    <definition name=".listCompetitors_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Competitors" />
+      <put-attribute name="ContentTopLt2" value="/views/listCompetitors.jsp" />
+    </definition>
+
+    <definition name=".showCompetitorMap_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Competitor Map" />
+      <put-attribute name="ContentTopLt2" value="/views/competitorMap.jsp" />
+    </definition>
+
+    <definition name=".listPersons_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Competitors" />
+      <put-attribute name="ContentTopLt2" value="/views/listPersons.jsp" />
+    </definition>
+
+    <definition name=".addCompetitorForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Competitor" />
+      <put-attribute name="ContentTopLt2" value=".addCompetitorContent" />
+    </definition>
+
+    <definition name=".addCompetitorContent" template="/views/editCompetitorForm.jsp">
+      <put-attribute name="pageTitle" value="Add Competitor" />
+      <put-attribute name="submitUrl" value="/d/addCompetitor.htm" />
+    </definition>
+
+    <definition name=".editCompetitorForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Competitor" />
+      <put-attribute name="ContentTopLt2" value=".editCompetitorContent" />
+    </definition>
+
+    <definition name=".editCompetitorContent" template="/views/editCompetitorForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Competitor" />
+      <put-attribute name="submitUrl" value="/d/editCompetitor.htm" />
+    </definition>
+
+    <definition name=".editCompetitorFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Competitor Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editCompetitorFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteCompetitorConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Competitor Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCompetitorConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteCompetitorSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Competitor Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCompetitorSuccess.jsp" />
+    </definition>
+
+
+    <!-- Admin CRUD -->
+    <definition name=".listAdmins_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Admins" />
+      <put-attribute name="ContentTopLt2" value="/views/listAdmins.jsp" />
+    </definition>
+
+    <definition name=".addAdminForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Admin" />
+      <put-attribute name="ContentTopLt2" value=".addAdminContent" />
+    </definition>
+
+    <definition name=".addAdminContent" template="/views/editAdminForm.jsp">
+      <put-attribute name="pageTitle" value="Add Admin" />
+      <put-attribute name="submitUrl" value="/d/addAdmin.htm" />
+    </definition>
+
+    <definition name=".editAdminForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Admin" />
+      <put-attribute name="ContentTopLt2" value=".editAdminContent" />
+    </definition>
+
+    <definition name=".editAdminContent" template="/views/editAdminForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Admin" />
+      <put-attribute name="submitUrl" value="/d/editAdmin.htm" />
+    </definition>
+
+    <definition name=".editAdminFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Admin Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editAdminFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteAdminConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Admin Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteAdminConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteAdminSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Admin Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteAdminSuccess.jsp" />
+    </definition>
+
+
+    <!-- Team CRUD -->
+    <definition name=".listTeams_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Teams" />
+      <put-attribute name="ContentTopLt2" value="/views/listTeams.jsp" />
+    </definition>
+
+    <definition name=".addTeamForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Team" />
+      <put-attribute name="ContentTopLt2" value=".addTeamContent" />
+    </definition>
+
+    <definition name=".addTeamContent" template="/views/editTeamForm.jsp">
+      <put-attribute name="pageTitle" value="Add Team" />
+      <put-attribute name="submitUrl" value="/d/addTeam.htm" />
+    </definition>
+
+    <definition name=".editTeamForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Team" />
+      <put-attribute name="ContentTopLt2" value=".editTeamContent" />
+    </definition>
+
+    <definition name=".editTeamContent" template="/views/editTeamForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Team" />
+      <put-attribute name="submitUrl" value="/d/editTeam.htm" />
+    </definition>
+
+    <definition name=".editTeamFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Team Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editTeamFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteTeamConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Team Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteTeamConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteTeamSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Team Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteTeamSuccess.jsp" />
+    </definition>
+
+
+    <!-- Rank CRUD -->
+    <definition name=".listRanks_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Ranks" />
+      <put-attribute name="ContentTopLt2" value="/views/listRanks.jsp" />
+    </definition>
+
+
+    <!-- CpVisit CRUD -->
+    <definition name=".listCpVisits_view" extends=".viewLayout">
+      <put-attribute name="title" value="List CP Visits" />
+      <put-attribute name="ContentTopLt2" value="/views/listCpVisits.jsp" />
+    </definition>
+
+    <definition name=".addCpVisitForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add CP Visit" />
+      <put-attribute name="ContentTopLt2" value=".addCpVisitContent" />
+    </definition>
+
+    <definition name=".addCpVisitContent" template="/views/editCpVisitForm.jsp">
+      <put-attribute name="pageTitle" value="Add CP Visit" />
+      <put-attribute name="submitUrl" value="/d/addCpVisit.htm" />
+    </definition>
+
+    <definition name=".editCpVisitForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit CP Visit" />
+      <put-attribute name="ContentTopLt2" value=".editCpVisitContent" />
+    </definition>
+
+    <definition name=".editCpVisitContent" template="/views/editCpVisitForm.jsp">
+      <put-attribute name="pageTitle" value="Edit CP Visit" />
+      <put-attribute name="submitUrl" value="/d/editCpVisit.htm" />
+    </definition>
+
+    <definition name=".editCpVisitFormSubmitted_dashboard" extends=".viewLayout">
+      <put-attribute name="title" value="CP Visit Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editCpVisitFormSubmitted.jsp" />
+      <put-attribute name="ContentTopLt3" value="/views/listCpVisits.jsp" />
+    </definition>
+
+    <definition name=".deleteCpVisitConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete CP Visit Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCpVisitConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteCpVisitSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="CP Visit Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteCpVisitSuccess.jsp" />
+    </definition>
+
+    <!-- CpVisit Batch CRUD -->
+    <definition name=".editCpVisitBatchForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit CP Visit Batch" />
+      <put-attribute name="Script" value=".ScriptEditCpVisitBatch" />
+      <put-attribute name="Body" value="/views/BodyEditCpVisitBatch.jsp" />
+      <put-attribute name="ContentTopLt2" value=".editCpVisitBatchContent" />
+    </definition>
+
+    <definition name=".editCpVisitBatchContent" template="/views/editCpVisitBatchForm.jsp">
+      <put-attribute name="pageTitle" value="Edit CP Visit Batch" />
+      <put-attribute name="submitUrl" value="/d/editCpVisitBatch.htm" />
+    </definition>
+
+    <definition name=".ScriptEditCpVisitBatch" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="/js/jquery.blockUI-2.29.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/editCpVisitBatch.js" />
+      </put-list-attribute>
+    </definition>
+
+    <definition name=".editCpVisitBatchFormSubmitted_view" extends=".viewLayout">
+      <put-attribute name="title" value="CP Visit Batch Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editCpVisitBatchFormSubmitted.jsp" />
+      <put-attribute name="ContentTopLt3" value="/views/listCpVisits.jsp" />
+    </definition>
+
+    <!-- Comparator CRUD -->
+    <definition name=".listComparators_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Comparators" />
+      <put-attribute name="ContentTopLt2" value="/views/listComparators.jsp" />
+    </definition>
+
+    <definition name=".addComparatorForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Add Comparator" />
+      <put-attribute name="ContentTopLt2" value=".addComparatorContent" />
+    </definition>
+
+    <definition name=".addComparatorContent" template="/views/editComparatorForm.jsp">
+      <put-attribute name="pageTitle" value="Add Comparator" />
+      <put-attribute name="submitUrl" value="/d/addComparator.htm" />
+    </definition>
+
+    <definition name=".editComparatorForm_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Edit Comparator" />
+      <put-attribute name="ContentTopLt2" value=".editComparatorContent" />
+    </definition>
+
+    <definition name=".editComparatorContent" template="/views/editComparatorForm.jsp">
+      <put-attribute name="pageTitle" value="Edit Comparator" />
+      <put-attribute name="submitUrl" value="/d/editComparator.htm" />
+    </definition>
+
+    <definition name=".editComparatorFormSubmitted_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Comparator Submitted" />
+      <put-attribute name="ContentTopLt2" value="/views/editComparatorFormSubmitted.jsp" />
+    </definition>
+
+    <definition name=".deleteComparatorConfirm_view" extends=".viewLayout">
+      <put-attribute name="title" value="Delete Comparator Confirm" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteComparatorConfirm.jsp" />
+    </definition>
+
+    <definition name=".deleteComparatorSuccess_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Comparator Deleted" />
+      <put-attribute name="ContentTopLt2" value="/views/deleteComparatorSuccess.jsp" />
+    </definition>
+
+
+    <!-- Leaderboard Updates -->
+    <definition name=".listLbdUpdates_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Leaderboard Updates" />
+      <put-attribute name="Script" value=".ScriptListLbdUpdates" />
+      <put-attribute name="ContentTopLt2" value="/views/listLbdUpdatesVertical.jsp" />
+    </definition>
+
+    <definition name=".listLbdUpdates_raw" extends=".rawLayout">
+      <put-attribute name="title" value="List Leaderboard Updates" />
+      <put-attribute name="Script" value=".ScriptListLbdUpdates" />
+      <put-attribute name="ContentTopLt2" value="/views/listLbdUpdatesVertical.jsp" />
+    </definition>
+
+    <definition name=".ScriptListLbdUpdates" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+        <add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/lbdupdates.js" />
+      </put-list-attribute>
+    </definition>
+
+
+    <!-- Race Updates -->
+    <definition name=".listUpdates_view" extends=".viewLayout">
+      <put-attribute name="title" value="List Updates" />
+      <put-attribute name="Link1" value="/views/LinkUpdates.jsp" />
+      <put-attribute name="Script" value=".ScriptListUpdates" />
+      <put-attribute name="ContentTopLt2" value="/views/updates.jsp" />
+    </definition>
+
+
+    <definition name=".ScriptListUpdates" template="/views/Script.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" /> 
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/jquery-ui-1.7.2.min.js" /> 
+        <add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/updates.js" />
+      </put-list-attribute>
+    </definition>
+
+
+
+    <!-- Google Maps views -->
+    <definition name=".listControlPointsGmap_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Google Map - Control Points" />
+      <put-attribute name="Link1" value="/views/LinkLbd.jsp" />
+      <put-attribute name="Script" value=".ScriptListControlPointsGmap" />
+      <put-attribute name="ContentTopLt2" value="/views/listControlPointsGmap.jsp" />
+      <put-attribute name="ContentTopLt3" value="/views/liveChat.jsp" /> 
+      <put-attribute name="ContentRt1" value="/views/gmapController.jsp" />
+    </definition>
+
+    <definition name=".ScriptListControlPointsGmap" template="/views/ScriptListControlPointsGmap.jsp">
+      <put-list-attribute name="jsfilesList">
+	<add-attribute value="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js" />
+	<add-attribute value="http://www.mytopo.com/google/mytopo.js" />
+	<add-attribute value="/js/s3-slider.min.js" />
+	<add-attribute value="/js/jquery-ui-1.7.2.min.js" /> 
+	<add-attribute value="/js/rdb.js" />
+	<add-attribute value="/js/gmap.js" />
+      </put-list-attribute>
+    </definition>
+
+
+    <!-- for add registration flow -->
+    <definition name=".addRegistrationSelectEvent_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Registration - Event" />
+      <put-attribute name="ContentTopLt2" value="/views/addRegistrationSelectEvent.jsp" />
+    </definition>
+
+    <definition name=".addRegistrationSelectCourseDivision_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Registration - Course/Division" />
+      <put-attribute name="ContentTopLt2" value="/views/addRegistrationSelectCourseDivision.jsp" />
+    </definition>
+
+    <definition name=".addRegistrationSelectMembers_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Registration - Members" />
+      <put-attribute name="ContentTopLt2" value="/views/addRegistrationSelectMembers.jsp" />
+    </definition>
+
+    <definition name=".addRegistrationEditCompetitors_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Registration - Event" />
+      <put-attribute name="ContentTopLt2" value="/views/addRegistrationEditCompetitors.jsp" />
+    </definition>
+
+    <definition name=".addRegistrationConfirmation_dashboard" extends=".dashboardLayout">
+      <put-attribute name="title" value="Registration - Event" />
+      <put-attribute name="ContentTopLt2" value="/views/addRegistrationConfirmation.jsp" />
+    </definition>
+
+
+
+    <!-- for testing only -->
+    <definition name=".test" extends=".viewLayout">
+      <put-attribute name="title" value="Test" />
+      <put-attribute name="ContentTopLt2" value="/views/test.jsp" />
+    </definition>
+
+</tiles-definitions>
+

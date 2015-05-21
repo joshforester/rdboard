@@ -1,0 +1,13 @@
+1.  bounce tomcat
+2.  edit build.xml to contain proper home directory
+3.  edit Constants.java GMAPS_API_KEY, PROXIED
+4.  edit log4j.properties to restrict logging to warn
+5.  update database with new schema
+6.  build/deploy
+
+# sql updates:
+
+# deployment:
+1.  verify .bashrc CATALINA_OPTS settings and JAVA_OPTS settings use memory and GMT tz 
+2.  verify server.xml uses compression in connector (compression=on)
+3.  turn off check to reload JSP on every request in tomcat web.xml (http://www.planetjavainc.com/wow_docs/Optimize_Tomcat_form.htm) 

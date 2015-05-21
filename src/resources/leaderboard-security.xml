@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	     xmlns:beans="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans
+				 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				 http://www.springframework.org/schema/security
+				 http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+  <http auto-config="true" access-denied-page="/d/accessDenied.htm">
+
+    <intercept-url pattern="/d/listCompetitors.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+
+    <intercept-url pattern="/d/editCpVisitBatch.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+
+    <intercept-url pattern="/d/addCpVisit.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+    <intercept-url pattern="/d/editCpVisit.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+    <intercept-url pattern="/d/cpvisits/*/*/save" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+
+<!--
+BasicAuthenticationFilter
+    <sec:filter-chain pattern="/services/**" filters="      appSecurityContextFilter,       sessionCookieAuthenticationFilter,      sessionPasswordAuthenticationFilter,      siteminderRequestHeadersFilter,      anonFilter,       appLogoutFilter,       requestCacheFilter,       servletApiFilter,       appSessionMgmtFilter,       appExceptionTranslator,       appFilterSecurityInterceptor"/>
+-->
+
+    <intercept-url pattern="/d/deleteCpVisit.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+    <intercept-url pattern="/d/deleteCpVisitConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+
+    <intercept-url pattern="/d/addCourse.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editCourse.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteCourse.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteCourseConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/addTeam.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editTeam.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteTeam.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteTeamConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/addDivision.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editDivision.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteDivision.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteDivisionConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    
+    <intercept-url pattern="/d/addEvent.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editEvent.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteEvent.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteEventConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/listControlPoints.htm*" access="ROLE_ROOT,ROLE_PROMOTER,ROLE_EVENTADMIN" />
+    <intercept-url pattern="/d/addControlPoint.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editControlPoint.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteControlPoint.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteControlPointConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/listComparators.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/addComparator.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editComparator.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteComparator.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteComparatorConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/addRegistrationFlow.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/addCompetitor.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/editCompetitor.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteCompetitor.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+    <intercept-url pattern="/d/deleteCompetitorConfirmed.htm*" access="ROLE_ROOT,ROLE_PROMOTER" />
+
+    <intercept-url pattern="/d/listAdmins.htm*" access="ROLE_ROOT" />
+    <intercept-url pattern="/d/addAdmin.htm*" access="ROLE_ROOT" />
+    <intercept-url pattern="/d/editAdmin.htm*" access="ROLE_ROOT" />
+    <intercept-url pattern="/d/deleteAdmin.htm*" access="ROLE_ROOT" />
+    <intercept-url pattern="/d/deleteAdminConfirmed.htm*" access="ROLE_ROOT" />
+
+    <form-login login-page="/d/login.htm" default-target-url="/" authentication-failure-url="/d/login.htm?login_error=1" />
+    <custom-filter after="FORM_LOGIN_FILTER" ref="basicProcessingFilter" />
+    <logout logout-url="/d/logout.htm" logout-success-url="/d/logoutSuccess.htm" />
+  </http>
+
+  <!-- 
+       For hooking up with multiple authentication providers, see the org.springframework.security.providers.ProviderManager
+    -->
+  <beans:bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+    <beans:property name="authenticationManager" ref="authenticationManager"/>
+    <beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    <beans:property name="ignoreFailure" value="false"/>
+  </beans:bean>
+  
+  <beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+    <beans:property name="realmName" value="RDBoard.com"/>
+  </beans:bean>
+
+
+
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider>
+      <password-encoder hash="md5" /> 
+      <jdbc-user-service data-source-ref="dataSource" users-by-username-query="SELECT username, password, 'true' AS enabled FROM ADMIN WHERE username = ? AND is_disabled='no'" authorities-by-username-query="SELECT a.username, auth.authority AS authorities FROM ADMIN a, AUTHORITY auth WHERE a.username = ? AND a.id = auth.id" />
+    </authentication-provider>
+  </authentication-manager>
+
+</beans:beans>

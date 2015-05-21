@@ -1,0 +1,12 @@
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('45','Checkpoint Zero/Inov-8','1','1','1','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('46','ROAM/Swiftwick','1','1','2','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('47','Secret Squirrel','1','1','3','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('48','Snickers Marathon','1','1','4','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('49','Fukarwi','1','1','5','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('50','Wedali','1','1','6','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('51','Bear North','2','1','7','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('52','No Man\'s Land','2','2','8','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('53','HTFU','2','2','9','1970-01-01 00:00:00','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('58','Team ROC Gear/4LPH4 1337 - Tequila','1','1','17','2009-09-08 14:05:11','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('61','Team ROC Gear/4LPH4 1337','4','8','1','2009-09-23 15:30:35','0','0','no');
+INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted) VALUES ('63','Team ROC Gear/4LPH4 1337 - Lime','1','3','19','2009-09-24 01:31:42','0','0','no');

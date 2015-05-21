@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Authority">
+
+  <typeAlias alias="authority" type="com.myrunning.leaderboard.model.Authority"/>
+
+  <resultMap id="authorityResult" class="authority">
+    <result property="id" column="id" />
+    <result property="authority" column="authority" />
+  </resultMap>
+
+  <select id="getAuthoritiesByPersonId" resultMap="authorityResult" parameterClass="string">
+    SELECT *
+    FROM AUTHORITY
+    WHERE id = #value#
+  </select>
+
+  <insert id="insertAuthority" parameterClass="authority">
+    INSERT INTO AUTHORITY (id, authority)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="authority">#authority#</isNotNull>
+      <isNull prepend=", " property="authority">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteAuthoritiesByPersonId" parameterClass="string">
+    DELETE
+    FROM AUTHORITY
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

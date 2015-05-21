@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Rank">
+
+  <typeAlias alias="teamIdAndRangeQuery" type="com.myrunning.leaderboard.db.dao.query.TeamIdAndRangeQuery"/>
+  <typeAlias alias="courseIdAndRangeQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndRangeQuery"/>
+  <typeAlias alias="courseIdAndDivisionIdQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndDivisionIdQuery"/>
+  <typeAlias alias="rank" type="com.myrunning.leaderboard.model.Rank"/>
+  <typeAlias alias="decoratedRank" type="com.myrunning.leaderboard.model.DecoratedRank"/>
+
+  <resultMap id="rankResult" class="rank">
+    <result property="id" column="id" />
+    <result property="teamId" column="team_id" />
+    <result property="time" column="time" />
+    <result property="divisionPlace" column="division_place" />
+    <result property="coursePlace" column="course_place" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <resultMap id="decoratedRankResult" class="decoratedRank">
+    <result property="id" column="id" />
+    <result property="teamId" column="team_id" />
+    <result property="time" column="time" />
+    <result property="divisionPlace" column="division_place" />
+    <result property="coursePlace" column="course_place" />
+    <result property="isDeleted" column="is_deleted" />
+    <result property="teamNumber" column="team_number" />
+    <result property="teamName" column="team_name" />
+    <result property="teamDivisionId" column="team_division_id" />
+    <result property="teamCourseId" column="team_course_id" />
+  </resultMap>
+
+  <select id="getDecoratedRankById" resultMap="decoratedRankResult" parameterClass="string">
+    SELECT r.*, t.name AS team_name, t.number AS team_number, t.division_id AS team_division_id, t.course_id AS team_course_id
+    FROM RANK r, TEAM t
+    WHERE r.id = #id#
+      AND r.team_id = t.id
+  </select>
+
+  <select id="getDecoratedRanksByCourseIdAndDivisionId" resultMap="decoratedRankResult" parameterClass="courseIdAndDivisionIdQuery">
+    SELECT r.*, t.name AS team_name, t.number AS team_number, t.division_id AS team_division_id, t.course_id AS team_course_id
+    FROM RANK r, TEAM t
+    WHERE t.course_id = #courseId#
+      AND t.division_id = #divisionId#
+      AND r.team_id = t.id
+  </select>
+
+  <select id="getDecoratedRanksByCourseId" resultMap="decoratedRankResult" parameterClass="string">
+    SELECT r.*, t.name AS team_name, t.number AS team_number, t.division_id AS team_division_id, t.course_id AS team_course_id
+    FROM RANK r, TEAM t
+    WHERE t.course_id = #id#
+      AND r.team_id = t.id
+  </select>
+
+  <select id="getRanksByTeamId" resultMap="rankResult" parameterClass="teamIdAndRangeQuery">
+    SELECT *
+    FROM RANK
+    WHERE team_id = #id#
+    <dynamic>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+
+  <select id="getDecoratedRankByTeamId" resultMap="decoratedRankResult" parameterClass="teamIdAndRangeQuery">
+    SELECT r.*, t.name AS team_name, t.number AS team_number, t.division_id AS team_division_id, t.course_id AS team_course_id
+    FROM RANK r, TEAM t
+    WHERE r.team_id = #id#
+      AND r.team_id = t.id
+    <dynamic>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND r.time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND r.time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+    ORDER BY r.time DESC
+    LIMIT 1
+  </select>
+
+  <select id="getRanksByCourseId" resultMap="rankResult" parameterClass="courseIdAndRangeQuery">
+    SELECT r.*
+    FROM RANK r, TEAM t, COURSE c
+    WHERE c.id = #id#
+      AND t.course_id = c.id
+      AND r.team_id = t.id
+    <dynamic>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND r.time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND r.time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+  <insert id="insertRank" parameterClass="rank">
+    INSERT INTO RANK (id, team_id, time, division_place, course_place, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="teamId">#teamId#</isNotNull>
+      <isNull prepend=", " property="teamId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="time">#time#</isNotNull>
+      <isNull prepend=", " property="time">DEFAULT</isNull>
+      <isNotNull prepend=", " property="divisionPlace">#divisionPlace#</isNotNull>
+      <isNull prepend=", " property="divisionPlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="coursePlace">#coursePlace#</isNotNull>
+      <isNull prepend=", " property="coursePlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+</sqlMap>

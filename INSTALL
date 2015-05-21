@@ -1,0 +1,74 @@
+=============
+PREREQUISITES
+=============
+
+01.  Install Java version 1.5 (5.0) or greater.
+http://java.sun.com/javase/downloads/index.jsp
+
+02.  Install Apache Ant:
+http://ant.apache.org/bindownload.cgi
+
+03.  Add the following 3 lines to your .bashrc or equivalent:
+export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+export CATALINA_OPTS=-XX:MaxPermSize=256m
+export JAVA_OPTS=-Duser.timezone=GMT
+
+04.  MySQL (table name case sensitivity might be a problem for non-Linux systems: http://dev.mysql.com/doc/refman/5.0/en/identifier-case-sensitivity.html).  
+
+
+====================
+INSTALL INSTRUCTIONS
+====================
+
+01.  Download and extract the leaderboard tarball to your home directory.  After extraction, dependency files can either be downloaded from their site or taken from the 3rdParty directory in the leaderboard:
+cd ~
+wget http://ninja.rdboard.com/leaderboard-20090917_1222.tar.gz
+tar -xzf leaderboard-20090917_1222.tar.gz 
+
+02.  Install Apache Tomcat, 6.0.20 or greater.  Extract the file to your home directory, and create a symlink to it called tomcat:
+cp ~/leaderboard/3rdParty/tomcat/apache-tomcat-6.0.20.tar.gz
+ln -s ~/apache-tomcat-6.0.20 ~/tomcat
+
+03.  Setup the Tomcat user file so that the build scripts can bounce Tomcat via the Manager Application if needed (http://tomcat.apache.org/tomcat-6.0-doc/realm-howto.html#Manager%20Application):
+cp ~/leaderboard/3rdParty/tomcat/conf/tomcat-users.xml ~/tomcat/conf/
+
+04.  Setup Log4j logging within Tomcat (http://tomcat.apache.org/tomcat-6.0-doc/logging.html):
+cp ~/leaderboard/3rdParty/tomcat/conf/log4j.properties ~/tomcat/lib/
+cp ~/leaderboard/3rdParty/javalibs/apache-log4j-1.2.15.tar.gz ~/ 
+tar -xzf ~/apache-log4j-1.2.15.tar.gz
+cp ~/apache-log4j-1.2.15/log4j-1.2.15.jar ~/tomcat/lib/
+rm -rf ~/apache-log4j-1.2.15.tar.gz ~/apache-log4j-1.2.15
+mv ~/tomcat/bin/tomcat-juli.jar ~/tomcat/bin/tomcat-juli.jar.orig
+cp ~/leaderboard/3rdParty/tomcat/lib/tomcat-juli.jar ~/tomcat/bin/
+cp ~/leaderboard/3rdParty/tomcat/lib/tomcat-juli-adapters.jar ~/tomcat/lib/
+
+05.  Start Tomcat to verify the installation.  At this point, you should have a working Tomcat installation.
+~/tomcat/bin/startup.sh
+
+You may verify by going to the following URL:
+http://localhost:8080/
+
+And using the username/password "leaderboard/leaderboard" at the following URL to verify the Manager application is working properly.:
+http://localhost:8080/manager/html
+
+06.  As your MySQL root user, execute the following:
+mysql -u root -p < ~/leaderboard/src/sql/init/DB.sql
+
+07.  Now as the leaderboard DB user (password:  leaderboard):
+mysql -u leaderboard < ~/leaderboard/src/sql/init/*.sql 
+
+08.  Restore a starter test set of data with (password:  leaderboard):
+cd ~/leaderboard/src/sql/bkup
+./restoreDB.sh
+
+09.  Set the value of the catalina.home and package.home properties in ~/leaderboard/build.xml to the correct paths and build the application:
+cd ~/leaderboard
+ant init
+
+Verify the build/installation by visiting the following URL:
+http://localhost:8080/leaderboard
+
+Verify the javadocs by visiting the following URL:
+http://localhost:8080/leaderboard/docs/api/index.html
+
+10.  Read the README.

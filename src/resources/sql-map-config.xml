@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig 
+	  PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+  <!--
+
+  <properties resource="resources/database.properties"/>
+
+  <settings
+    cacheModelsEnabled="true"
+    enhancementEnabled="true"
+    maxSessions="64"
+    maxTransactions="8"
+    maxRequests="128"/>
+
+
+  <transactionManager type="JDBC">
+    <dataSource type="DBCP">
+      <property name="JDBC.Driver" value="${driver}"/>
+      <property name="JDBC.ConnectionURL" value="${url}"/>
+      <property name="JDBC.Username" value="${username}"/>
+      <property name="JDBC.Password" value="${password}"/>
+      <property name="JDBC.DefaultAutoCommit" value="true"/>
+      <property name="Pool.MaximumActiveConnections" value="15"/>
+      <property name="Pool.MaximumIdleConnections" value="15"/>
+      <property name="Pool.MaximumWait" value="1000"/>
+    </dataSource>
+  </transactionManager>
+
+ 
+  <sqlMap resource="resources/Locale.xml"/>
+  <sqlMap resource="resources/LastInsertId.xml"/>
+
+  -->
+
+  <sqlMap resource="resources/LastInsertId.xml"/>
+  <sqlMap resource="resources/Team.xml"/>
+  <sqlMap resource="resources/Event.xml"/>
+  <sqlMap resource="resources/Course.xml"/>
+  <sqlMap resource="resources/Division.xml"/>
+  <sqlMap resource="resources/ControlPoint.xml"/>
+  <sqlMap resource="resources/Person.xml"/>
+  <sqlMap resource="resources/Competitor.xml"/>
+  <sqlMap resource="resources/Admin.xml"/>
+  <sqlMap resource="resources/CpVisit.xml"/>
+  <sqlMap resource="resources/Rank.xml"/>
+  <sqlMap resource="resources/Update.xml"/>
+  <sqlMap resource="resources/Comparator.xml"/>
+  <sqlMap resource="resources/TeamInstanceRel.xml"/>
+  <sqlMap resource="resources/DataResource.xml"/>
+  <sqlMap resource="resources/Authority.xml"/>
+  <sqlMap resource="resources/Identity.xml"/>
+
+</sqlMapConfig>

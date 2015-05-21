@@ -1,0 +1,19 @@
+<%--
+File: leaderboard.jsp
+Author: Joshua Forester
+Date: 2009/08/04
+Description: Default page.
+--%>
+
+<%@ taglib prefix="c" uri="/tags/jstl-c" %>
+
+
+Leaderboard View template<br>
+<br>
+${leaderboard}
+
+
+
+
+
+

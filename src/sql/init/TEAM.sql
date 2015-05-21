@@ -1,0 +1,26 @@
+SET FOREIGN_KEY_CHECKS=0;
+CREATE TABLE `leaderboard`.`TEAM` (
+  `id` INTEGER UNSIGNED NOT NULL,
+  `name` VARCHAR(64)  NOT NULL DEFAULT 'default',
+  `course_id` INTEGER UNSIGNED NOT NULL,
+  `division_id` INTEGER UNSIGNED NOT NULL,
+  `number` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  `registration_time` DATETIME  NOT NULL DEFAULT '1970-01-01 00:00:00',
+  `division_place` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  `course_place` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_deleted` ENUM('default','no','yes')  NOT NULL DEFAULT 'no',
+  PRIMARY KEY(`id`),
+  CONSTRAINT `TEAM_course_id_fkc` FOREIGN KEY `TEAM_course_id_fkc` (`course_id`)
+    REFERENCES `COURSE` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `TEAM_division_id_fkc` FOREIGN KEY `TEAM_division_id_fkc` (`division_id`)
+    REFERENCES `DIVISION` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `TEAM_id_fkc` FOREIGN KEY `TEAM_id_fkc` (`id`)
+    REFERENCES `DATA_RESOURCE` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+)
+TYPE = InnoDB;

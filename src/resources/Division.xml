@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Division">
+
+  <typeAlias alias="eventIdAndNameQuery" type="com.myrunning.leaderboard.db.dao.query.EventIdAndNameQuery"/>
+  <typeAlias alias="eventDivision" type="com.myrunning.leaderboard.model.EventDivision"/>
+  <typeAlias alias="division" type="com.myrunning.leaderboard.model.Division"/>
+
+  <resultMap id="eventDivisionResult" class="eventDivision">
+    <result property="id" column="division_id" />
+    <result property="eventId" column="event_id" />
+    <result property="divisionId" column="division_id" />
+    <result property="eventName" column="event_name" />
+    <result property="divisionName" column="division_name" />
+  </resultMap>
+
+  <resultMap id="divisionResult" class="division">
+    <result property="id" column="id" />
+    <result property="eventId" column="event_id" />
+    <result property="name" column="name" />
+    <result property="memberCount" column="member_count" />
+    <result property="consistency" column="consistency" />
+    <result property="isElite" column="is_elite" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getDivisionById" resultMap="divisionResult" parameterClass="string">
+    SELECT *
+    FROM DIVISION
+    WHERE id = #value#
+  </select>
+
+  <select id="getDivisionByTeamId" resultMap="divisionResult" parameterClass="string">
+    SELECT d.*
+    FROM DIVISION d, TEAM t
+    WHERE t.id = #value#
+      AND d.id = t.division_id
+  </select>
+
+  <select id="getDivisionByEventIdAndName" resultMap="divisionResult" parameterClass="eventIdAndNameQuery">
+    SELECT *
+    FROM DIVISION
+    WHERE event_id = #eventId#
+      AND name = #name#
+  </select>
+
+  <select id="getDivisionsByEventId" resultMap="divisionResult" parameterClass="string">
+    SELECT *
+    FROM DIVISION
+    WHERE event_id = #value#
+    ORDER BY name ASC
+  </select>
+
+  <select id="getEventDivisions" resultMap="eventDivisionResult">
+    SELECT e.id AS event_id, d.id AS division_id, e.name AS event_name, d.name AS division_name
+    FROM EVENT e, DIVISION d
+    WHERE e.id = d.event_id
+    ORDER BY e.name, d.name ASC
+  </select>
+
+  <update id="updateDivision" parameterClass="division">
+    UPDATE DIVISION
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="eventId">event_id = #eventId#</isNotNull>
+      <isNotNull prepend=", " property="name">name = #name#</isNotNull>
+      <isNotNull prepend=", " property="memberCount">member_count = #memberCount#</isNotNull>
+      <isNotNull prepend=", " property="consistency">consistency = #consistency#</isNotNull>
+      <isNotNull prepend=", " property="isElite">is_elite = #isElite#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertDivision" parameterClass="division">
+    INSERT INTO DIVISION (id, event_id, name, member_count, consistency, is_elite, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="eventId">#eventId#</isNotNull>
+      <isNull prepend=", " property="eventId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="name">#name#</isNotNull>
+      <isNull prepend=", " property="name">DEFAULT</isNull>
+      <isNotNull prepend=", " property="memberCount">#memberCount#</isNotNull>
+      <isNull prepend=", " property="memberCount">DEFAULT</isNull>
+      <isNotNull prepend=", " property="consistency">#consistency#</isNotNull>
+      <isNull prepend=", " property="consistency">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isElite">#isElite#</isNotNull>
+      <isNull prepend=", " property="isElite">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteDivisionById" parameterClass="string">
+    DELETE
+    FROM DIVISION
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

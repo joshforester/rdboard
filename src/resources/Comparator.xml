@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Comparator">
+
+  <typeAlias alias="comparator" type="com.myrunning.leaderboard.model.Comparator"/>
+
+  <resultMap id="comparatorResult" class="comparator">
+    <result property="id" column="id" />
+    <result property="courseId" column="course_id" />
+    <result property="type" column="type" />
+    <result property="tieAction" column="tie_action" />
+    <result property="comparatorOrder" column="c_order" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getComparatorById" resultMap="comparatorResult" parameterClass="string">
+    SELECT *
+    FROM COMPARATOR
+    WHERE id = #value#
+  </select>
+
+  <select id="getMaxComparatorOrderByCourseId" resultClass="int" parameterClass="string">
+    SELECT MAX(c_order) AS value
+    FROM COMPARATOR
+    WHERE course_id = #value#
+  </select>
+
+  <select id="getComparatorsByCourseId" resultMap="comparatorResult" parameterClass="string">
+    SELECT *
+    FROM COMPARATOR
+    WHERE course_id = #value#
+    ORDER BY c_order ASC
+  </select>
+
+  <update id="updateComparator" parameterClass="comparator">
+    UPDATE COMPARATOR
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="courseId">course_id = #courseId#</isNotNull>
+      <isNotNull prepend=", " property="type">type = #type#</isNotNull>
+      <isNotNull prepend=", " property="tieAction">tie_action = #tieAction#</isNotNull>
+      <isNotNull prepend=", " property="comparatorOrder">c_order = #comparatorOrder#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertComparator" parameterClass="comparator">
+    INSERT INTO COMPARATOR (id, course_id, type, tie_action, c_order, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="courseId">#courseId#</isNotNull>
+      <isNull prepend=", " property="courseId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="type">#type#</isNotNull>
+      <isNull prepend=", " property="type">DEFAULT</isNull>
+      <isNotNull prepend=", " property="tieAction">#tieAction#</isNotNull>
+      <isNull prepend=", " property="tieAction">DEFAULT</isNull>
+      <isNotNull prepend=", " property="comparatorOrder">#comparatorOrder#</isNotNull>
+      <isNull prepend=", " property="comparatorOrder">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteComparatorById" parameterClass="string">
+    DELETE
+    FROM COMPARATOR
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

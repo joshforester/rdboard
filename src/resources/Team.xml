@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Team">
+
+  <typeAlias alias="courseIdAndDivisionIdQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndDivisionIdQuery"/>
+  <typeAlias alias="courseIdAndNameQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndNameQuery"/>
+  <typeAlias alias="registrationQuery" type="com.myrunning.leaderboard.db.dao.query.RegistrationQuery"/>
+  <typeAlias alias="divisionIdAndNameQuery" type="com.myrunning.leaderboard.db.dao.query.DivisionIdAndNameQuery"/>
+  <typeAlias alias="team" type="com.myrunning.leaderboard.model.Team"/>
+
+
+  <resultMap id="teamResult" class="team">
+    <result property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="divisionId" column="division_id" />
+    <result property="courseId" column="course_id" />
+    <result property="number" column="number" />
+    <result property="registrationTime" column="registration_time" />
+    <result property="divisionPlace" column="division_place" />
+    <result property="coursePlace" column="course_place" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+
+  <select id="getTeamById" resultMap="teamResult" parameterClass="string">
+    SELECT *
+    FROM TEAM
+    WHERE id = #value#
+  </select>
+
+  <select id="getTeamByCourseIdAndName" resultMap="teamResult" parameterClass="courseIdAndNameQuery">
+    SELECT *
+    FROM TEAM
+    WHERE course_id = #courseId#
+      AND name = #name#
+  </select>
+
+  <select id="getTeamByDivisionIdAndName" resultMap="teamResult" parameterClass="divisionIdAndNameQuery">
+    SELECT *
+    FROM TEAM
+    WHERE division_id = #divisionId#
+      AND name = #name#
+  </select>
+
+  <select id="getRegistrationMemberCount" resultClass="int" parameterClass="registrationQuery">
+    SELECT COUNT(t.id) AS value
+    FROM TEAM t, Team_Instance_Rel tir, COMPETITOR c
+    WHERE t.course_id = #courseId#
+      AND t.id = tir.team_id
+      AND tir.competitor_id = c.id
+    <dynamic prepend=" AND (">
+      <isNotNull prepend=" OR " property="member1Id">c.person_id = #member1Id#</isNotNull>
+      <isNotNull prepend=" OR " property="member2Id">c.person_id = #member2Id#</isNotNull>
+      <isNotNull prepend=" OR " property="member3Id">c.person_id = #member3Id#</isNotNull>
+      <isNotNull prepend=" OR " property="member4Id">c.person_id = #member4Id#</isNotNull>
+      )
+    </dynamic>
+  </select>
+
+  <select id="getTeamsByCourseId" resultMap="teamResult" parameterClass="string">
+    SELECT *
+    FROM TEAM
+    WHERE course_id = #value#
+  </select>
+
+  <select id="getTeamsByDivisionId" resultMap="teamResult" parameterClass="string">
+    SELECT *
+    FROM TEAM
+    WHERE division_id = #value#
+  </select>
+
+  <select id="getTeamsByCourseIdAndDivisionId" resultMap="teamResult" parameterClass="courseIdAndDivisionIdQuery">
+    SELECT *
+    FROM TEAM
+    WHERE course_id = #courseId#
+      AND division_id = #divisionId#
+  </select>
+
+  <select id="getMaxTeamNumberByCourseId" resultClass="int" parameterClass="string">
+    SELECT MAX(number) AS value
+    FROM TEAM
+    WHERE course_id = #value#
+  </select>
+
+  <select id="getTeamCountByCourseId" resultClass="int" parameterClass="string">
+    SELECT COUNT(id) AS value
+    FROM TEAM
+    WHERE course_id = #value#
+  </select>
+
+  <select id="getTeamCountByDivisionId" resultClass="int" parameterClass="string">
+    SELECT COUNT(id) AS value
+    FROM TEAM
+    WHERE division_id = #value#
+  </select>
+
+  <select id="getTeamCountByCourseIdAndDivisionId" resultClass="int" parameterClass="courseIdAndDivisionIdQuery">
+    SELECT COUNT(id) AS value
+    FROM TEAM
+    WHERE course_id = #courseId#
+      AND division_id = #divisionId#
+  </select>
+
+  <update id="updateTeam" parameterClass="team">
+    UPDATE TEAM
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="name">name = #name#</isNotNull>
+      <isNotNull prepend=", " property="courseId">course_id = #courseId#</isNotNull>
+      <isNotNull prepend=", " property="divisionId">division_id = #divisionId#</isNotNull>
+      <isNotNull prepend=", " property="number">number = #number#</isNotNull>
+      <isNotNull prepend=", " property="registrationTime">registration_time = #registrationTime#</isNotNull>
+      <isNotNull prepend=", " property="divisionPlace">division_place = #divisionPlace#</isNotNull>
+      <isNotNull prepend=", " property="coursePlace">course_place = #coursePlace#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertTeam" parameterClass="team">
+    INSERT INTO TEAM (id, name, course_id, division_id, number, registration_time, division_place, course_place, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="name">#name#</isNotNull>
+      <isNull prepend=", " property="name">DEFAULT</isNull>
+      <isNotNull prepend=", " property="courseId">#courseId#</isNotNull>
+      <isNull prepend=", " property="courseId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="divisionId">#divisionId#</isNotNull>
+      <isNull prepend=", " property="divisionId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="number">#number#</isNotNull>
+      <isNull prepend=", " property="number">DEFAULT</isNull>
+      <isNotNull prepend=", " property="registrationTime">#registrationTime#</isNotNull>
+      <isNull prepend=", " property="registrationTime">DEFAULT</isNull>
+      <isNotNull prepend=", " property="divisionPlace">#divisionPlace#</isNotNull>
+      <isNull prepend=", " property="divisionPlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="coursePlace">#coursePlace#</isNotNull>
+      <isNull prepend=", " property="coursePlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteTeamById" parameterClass="string">
+    DELETE
+    FROM TEAM
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Course">
+
+  <typeAlias alias="eventIdAndNameQuery" type="com.myrunning.leaderboard.db.dao.query.EventIdAndNameQuery"/>
+  <typeAlias alias="eventCourse" type="com.myrunning.leaderboard.model.EventCourse"/>
+  <typeAlias alias="course" type="com.myrunning.leaderboard.model.Course"/>
+
+  <resultMap id="eventCourseResult" class="eventCourse">
+    <result property="id" column="course_id" />
+    <result property="eventId" column="event_id" />
+    <result property="courseId" column="course_id" />
+    <result property="eventName" column="event_name" />
+    <result property="courseName" column="course_name" />
+  </resultMap>
+
+  <resultMap id="courseResult" class="course">
+    <result property="id" column="id" />
+    <result property="eventId" column="event_id" />
+    <result property="name" column="name" />
+    <result property="type" column="type" />
+    <result property="lengthHours" column="length_hours" />
+    <result property="lengthMiles" column="length_miles" />
+    <result property="description" column="description" />
+    <result property="scribbleliveId" column="scribblelive_id" />
+    <result property="coveritliveId" column="coveritlive_id" />
+    <result property="feedburnerAllId" column="feedburner_all_id" />
+    <result property="feedburnerBlogsId" column="feedburner_blogs_id" />
+    <result property="feedburnerPhotosId" column="feedburner_photos_id" />
+    <result property="feedburnerVideosId" column="feedburner_videos_id" />
+    <result property="feedburnerAudioId" column="feedburner_audio_id" />
+    <result property="competitorGmapSuffix" column="competitor_gmap_suffix" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getCourseById" resultMap="courseResult" parameterClass="string">
+    SELECT *
+    FROM COURSE
+    WHERE id = #value#
+  </select>
+
+  <select id="getCourseByTeamId" resultMap="courseResult" parameterClass="string">
+    SELECT c.*
+    FROM COURSE c, TEAM t
+    WHERE t.id = #value#
+      AND c.id = t.course_id
+  </select>
+
+  <select id="getCourseByCpId" resultMap="courseResult" parameterClass="string">
+    SELECT c.*
+    FROM COURSE c, CP cp
+    WHERE cp.id = #value#
+      AND c.id = cp.course_id
+  </select>
+
+  <select id="getCourseByEventIdAndName" resultMap="courseResult" parameterClass="eventIdAndNameQuery">
+    SELECT *
+    FROM COURSE
+    WHERE event_id = #eventId#
+      AND name = #name#
+  </select>
+
+  <select id="getCoursesByEventId" resultMap="courseResult" parameterClass="string">
+    SELECT *
+    FROM COURSE
+    WHERE event_id = #value#
+  </select>
+
+  <select id="getEventCourses" resultMap="eventCourseResult">
+    SELECT e.id AS event_id, c.id AS course_id, e.name AS event_name, c.name AS course_name
+    FROM EVENT e, COURSE c
+    WHERE e.id = c.event_id
+    ORDER BY e.name, c.name ASC
+  </select>
+
+  <update id="updateCourse" parameterClass="course">
+    UPDATE COURSE
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="eventId">event_id = #eventId#</isNotNull>
+      <isNotNull prepend=", " property="name">name = #name#</isNotNull>
+      <isNotNull prepend=", " property="type">type = #type#</isNotNull>
+      <isNotNull prepend=", " property="lengthHours">length_hours = #lengthHours#</isNotNull>
+      <isNotNull prepend=", " property="lengthMiles">length_miles = #lengthMiles#</isNotNull>
+      <isNotNull prepend=", " property="description">description = #description#</isNotNull>
+      <isNotNull prepend=", " property="scribbleliveId">scribblelive_id = #scribbleliveId#</isNotNull>
+      <isNotNull prepend=", " property="coveritliveId">coveritlive_id = #coveritliveId#</isNotNull>
+      <isNotNull prepend=", " property="feedburnerAllId">feedburner_all_id = #feedburnerAllId#</isNotNull>
+      <isNotNull prepend=", " property="feedburnerBlogsId">feedburner_blogs_id = #feedburnerBlogsId#</isNotNull>
+      <isNotNull prepend=", " property="feedburnerPhotosId">feedburner_photos_id = #feedburnerPhotosId#</isNotNull>
+      <isNotNull prepend=", " property="feedburnerVideosId">feedburner_videos_id = #feedburnerVideosId#</isNotNull>
+      <isNotNull prepend=", " property="feedburnerAudioId">feedburner_audio_id = #feedburnerAudioId#</isNotNull>
+      <isNotNull prepend=", " property="competitorGmapSuffix">competitor_gmap_suffix = #competitorGmapSuffix#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertCourse" parameterClass="course">
+    INSERT INTO COURSE (id, event_id, name, type, length_hours, length_miles, description, scribblelive_id, coveritlive_id, feedburner_all_id, feedburner_blogs_id, feedburner_photos_id, feedburner_videos_id, feedburner_audio_id, competitor_gmap_suffix, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="eventId">#eventId#</isNotNull>
+      <isNull prepend=", " property="eventId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="name">#name#</isNotNull>
+      <isNull prepend=", " property="name">DEFAULT</isNull>
+      <isNotNull prepend=", " property="type">#type#</isNotNull>
+      <isNull prepend=", " property="type">DEFAULT</isNull>
+      <isNotNull prepend=", " property="lengthHours">#lengthHours#</isNotNull>
+      <isNull prepend=", " property="lengthHours">DEFAULT</isNull>
+      <isNotNull prepend=", " property="lengthMiles">#lengthMiles#</isNotNull>
+      <isNull prepend=", " property="lengthMiles">DEFAULT</isNull>
+      <isNotNull prepend=", " property="description">#description#</isNotNull>
+      <isNull prepend=", " property="description">DEFAULT</isNull>
+      <isNotNull prepend=", " property="scribbleliveId">#scribbleliveId#</isNotNull>
+      <isNull prepend=", " property="scribbleliveId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="coveritliveId">#coveritliveId#</isNotNull>
+      <isNull prepend=", " property="coveritliveId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="feedburnerAllId">#feedburnerAllId#</isNotNull>
+      <isNull prepend=", " property="feedburnerAllId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="feedburnerBlogsId">#feedburnerBlogsId#</isNotNull>
+      <isNull prepend=", " property="feedburnerBlogsId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="feedburnerPhotosId">#feedburnerPhotosId#</isNotNull>
+      <isNull prepend=", " property="feedburnerPhotosId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="feedburnerVideosId">#feedburnerVideosId#</isNotNull>
+      <isNull prepend=", " property="feedburnerVideosId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="feedburnerAudioId">#feedburnerAudioId#</isNotNull>
+      <isNull prepend=", " property="feedburnerAudioId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="competitorGmapSuffix">#competitorGmapSuffix#</isNotNull>
+      <isNull prepend=", " property="competitorGmapSuffix">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteCourseById" parameterClass="string">
+    DELETE
+    FROM COURSE
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

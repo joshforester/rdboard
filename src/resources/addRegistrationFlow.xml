@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+			  http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+  <input name="team_id" />
+  
+  <decision-state id="createOrEdit">
+    <if test="team_id == null" then="createRegistration" else="editRegistration" />
+  </decision-state>
+  
+  <action-state id="createRegistration">
+    <evaluate expression="registrationController.newRegistration()"
+	      result="flowScope.registration" />
+    <transition to="selectEvent" />
+  </action-state>
+
+  <action-state id="editRegistration">
+    <evaluate expression="registrationController.getRegistrationByTeamId(team_id)"
+              result="flowScope.registration" />
+    <transition to="selectEvent" />
+  </action-state>
+
+  <view-state id="selectEvent" model="registration" view=".addRegistrationSelectEvent_portal">
+    <on-render>
+      <evaluate expression="eventDao.getAll('name')" result="requestScope.events" />
+    </on-render>
+    <transition on="submit" to="selectCourseDivision" />
+  </view-state>
+
+  <view-state id="selectCourseDivision" model="registration" view=".addRegistrationSelectCourseDivision_portal">
+    <on-render>
+      <evaluate expression="courseDao.getCoursesByEventId(flowScope.registration.eventId, 'name')" result="requestScope.courses" />
+      <evaluate expression="divisionDao.getDivisionsByEventId(flowScope.registration.eventId, 'name')" result="requestScope.divisions" />
+    </on-render>
+    <transition on="submit" to="selectMembers" />
+  </view-state>
+  
+  <view-state id="selectMembers" model="registration" view=".addRegistrationSelectMembers_portal">
+    <on-render>
+      <evaluate expression="personDao.getAll('lastname',false)" result="requestScope.persons" />
+    </on-render>
+    <transition on="submit" to="editCompetitors" />
+  </view-state>
+
+  <view-state id="editCompetitors" model="registration" view=".addRegistrationEditCompetitors_portal">
+    <on-render>
+      <evaluate expression="registrationController.populateMembers(flowScope.registration)" />
+      <evaluate expression="person.getShirtSizes()" result="requestScope.shirtSizes" />
+      <evaluate expression="person.getEmergencyContactRelations()" result="requestScope.emergencyContactRelations" />
+    </on-render>
+    <transition on="submit" to="saveRegistration" />
+  </view-state>
+
+  <action-state id="saveRegistration">
+    <evaluate expression="registrationController.saveRegistration(flowScope.registration)" />
+    <transition to="confirmation" />
+  </action-state>
+
+  <view-state id="confirmation" view=".addRegistrationConfirmation_portal">
+    <transition on="confirm" to="finish" history="invalidate" />
+  </view-state>
+
+  <end-state id="finish" />
+
+  <end-state id="cancelled" />
+
+
+  <global-transitions>
+    <transition on="cancel" to="cancelled" bind="false" history="discard" />
+  </global-transitions>
+
+  <!-- for later when we wish to do away with selectEvent <input name="eventId" type="long" value="flowScope.eventId" required="true" /> -->
+
+
+
+</flow>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Admin">
+
+  <typeAlias alias="credentials" type="com.myrunning.leaderboard.model.Credentials"/>
+  <typeAlias alias="admin" type="com.myrunning.leaderboard.model.Admin"/>
+
+  <resultMap id="adminResult" class="admin">
+    <result property="id" column="id" />
+    <result property="identityId" column="identity_id" />
+    <result property="email" column="email" />
+    <result property="firstName" column="first_name" />
+    <result property="lastName" column="last_name" />
+    <result property="city" column="city" />
+    <result property="region" column="region" />
+    <result property="country" column="country" />
+    <result property="zip" column="zip" />
+    <result property="gender" column="gender" />
+    <result property="birthday" column="birthday" />
+    <result property="homePhone" column="home_phone" />
+    <result property="cellPhone" column="cell_phone" />
+    <result property="workPhone" column="work_phone" />
+    <result property="defaultEmergencyContactFirstName" column="default_emergency_contact_first_name" />
+    <result property="defaultEmergencyContactLastName" column="default_emergency_contact_last_name" />
+    <result property="defaultEmergencyContactRelation" column="default_emergency_contact_relation" />
+    <result property="defaultEmergencyPhone" column="default_emergency_phone" />
+    <result property="defaultShirtSize" column="default_shirt_size" />
+    <result property="defaultShoeSize" column="default_shoe_size" />
+    <result property="occupation" column="occupation" />
+    <result property="selfDescription" column="self_description" />
+    <result property="hobbiesInterests" column="hobbies_interests" />
+    <result property="favoriteQuote" column="favorite_quote" />
+    <result property="favoriteThings" column="favorite_things" />
+    <result property="website" column="website" />
+    <result property="isDisabled" column="is_disabled" />
+    <result property="isDeleted" column="is_deleted" />
+    <result property="username" column="username" />
+    <result property="password" column="password" />
+  </resultMap>
+
+  <select id="getAdminById" resultMap="adminResult" parameterClass="string">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE a.id = #value#
+      AND p.id = a.id
+  </select>
+
+  <select id="getAdminByEmail" resultMap="adminResult" parameterClass="string">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE p.email = #value#
+      AND p.id = a.id
+  </select>
+
+  <select id="getAdminByUsername" resultMap="adminResult" parameterClass="string">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE a.username = #value#
+      AND p.id = a.id
+  </select>
+
+  <select id="getAdminByUsernameAndPassword" resultMap="adminResult" parameterClass="credentials">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE a.username = #username#
+      AND a.password = #password#
+      AND p.id = a.id
+  </select>
+
+  <select id="getAdminByTraits" resultMap="adminResult" parameterClass="admin">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE p.first_name = #firstName#
+      AND p.last_name = #lastName#
+      AND p.city = #city#
+      AND p.region = #region#
+      AND p.country = #country#
+      AND p.zip = #zip#
+      AND p.gender = #gender#
+      AND p.birthday = #birthday#
+      AND p.id = a.id
+  </select>
+
+  <select id="getAllAdmins" resultMap="adminResult">
+    SELECT a.*, p.*
+    FROM PERSON p, ADMIN a
+    WHERE p.id = a.id
+  </select>
+
+  <update id="updateAdmin" parameterClass="admin">
+    UPDATE ADMIN 
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="username">username = #username#</isNotNull>
+      <isNotNull prepend=", " property="password">password = #password#</isNotNull>
+      <isNotNull prepend=", " property="isDisabled">is_disabled = #isDisabled#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertAdmin" parameterClass="admin">
+    INSERT INTO ADMIN (id, username, password, is_disabled, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="username">#username#</isNotNull>
+      <isNull prepend=", " property="username">DEFAULT</isNull>
+      <isNotNull prepend=", " property="password">#password#</isNotNull>
+      <isNull prepend=", " property="password">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDisabled">#isDisabled#</isNotNull>
+      <isNull prepend=", " property="isDisabled">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteAdminById" parameterClass="string">
+    DELETE
+    FROM ADMIN
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

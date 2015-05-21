@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Person">
+
+  <typeAlias alias="person" type="com.myrunning.leaderboard.model.Person"/>
+
+  <resultMap id="personResult" class="person">
+    <result property="id" column="id" />
+    <result property="identityId" column="identity_id" />
+    <result property="email" column="email" />
+    <result property="firstName" column="first_name" />
+    <result property="lastName" column="last_name" />
+    <result property="city" column="city" />
+    <result property="region" column="region" />
+    <result property="country" column="country" />
+    <result property="zip" column="zip" />
+    <result property="gender" column="gender" />
+    <result property="birthday" column="birthday" />
+    <result property="homePhone" column="home_phone" />
+    <result property="cellPhone" column="cell_phone" />
+    <result property="workPhone" column="work_phone" />
+    <result property="defaultEmergencyContactFirstName" column="default_emergency_contact_first_name" />
+    <result property="defaultEmergencyContactLastName" column="default_emergency_contact_last_name" />
+    <result property="defaultEmergencyContactRelation" column="default_emergency_contact_relation" />
+    <result property="defaultEmergencyPhone" column="default_emergency_phone" />
+    <result property="defaultShirtSize" column="default_shirt_size" />
+    <result property="defaultShoeSize" column="default_shoe_size" />
+    <result property="occupation" column="occupation" />
+    <result property="selfDescription" column="self_description" />
+    <result property="hobbiesInterests" column="hobbies_interests" />
+    <result property="favoriteQuote" column="favorite_quote" />
+    <result property="favoriteThings" column="favorite_things" />
+    <result property="website" column="website" />
+    <result property="isDisabled" column="is_disabled" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getPersonById" resultMap="personResult" parameterClass="string">
+    SELECT *
+    FROM PERSON
+    WHERE id = #value#
+  </select>
+
+  <select id="getPersonsByEmail" resultMap="personResult" parameterClass="string">
+    SELECT *
+    FROM PERSON
+    WHERE email = #value#
+  </select>
+
+  <select id="getPersonsByNameAndLocale" resultMap="personResult" parameterClass="person">
+    SELECT *
+    FROM PERSON
+    WHERE first_name = #firstName#
+      AND last_name = #lastName#
+      AND city = #city#
+      AND region = #region#
+      AND country = #country#
+      AND zip = #zip#
+  </select>
+
+  <select id="getPersonsByNameAndBirthday" resultMap="personResult" parameterClass="person">
+    SELECT *
+    FROM PERSON
+    WHERE first_name = #firstName#
+      AND last_name = #lastName#
+      AND birthday = #birthday#
+  </select>
+
+  <select id="getPersonsByIdentityId" resultMap="personResult" parameterClass="string">
+    SELECT p.*
+    FROM PERSON p, IDENTITY i
+    WHERE p.identity_id = i.id
+      AND i.id = #value#
+  </select>
+
+  <select id="getAllPersons" resultMap="personResult">
+    SELECT *
+    FROM PERSON
+  </select>
+
+  <update id="updatePerson" parameterClass="person">
+    UPDATE PERSON
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="identityId">identity_id = #identityId#</isNotNull>
+      <isNotNull prepend=", " property="email">email = #email#</isNotNull>
+      <isNotNull prepend=", " property="firstName">first_name = #firstName#</isNotNull>
+      <isNotNull prepend=", " property="lastName">last_name = #lastName#</isNotNull>
+      <isNotNull prepend=", " property="city">city = #city#</isNotNull>
+      <isNotNull prepend=", " property="region">region = #region#</isNotNull>
+      <isNotNull prepend=", " property="country">country = #country#</isNotNull>
+      <isNotNull prepend=", " property="zip">zip = #zip#</isNotNull>
+      <isNotNull prepend=", " property="gender">gender = #gender#</isNotNull>
+      <isNotNull prepend=", " property="birthday">birthday = #birthday#</isNotNull>
+      <isNotNull prepend=", " property="homePhone">home_phone = #homePhone#</isNotNull>
+      <isNotNull prepend=", " property="cellPhone">cell_phone = #cellPhone#</isNotNull>
+      <isNotNull prepend=", " property="workPhone">work_phone = #workPhone#</isNotNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactFirstName">default_emergency_contact_first_name = #defaultEmergencyContactFirstName#</isNotNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactLastName">default_emergency_contact_last_name = #defaultEmergencyContactLastName#</isNotNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactRelation">default_emergency_contact_relation = #defaultEmergencyContactRelation#</isNotNull>
+      <isNotNull prepend=", " property="defaultEmergencyPhone">default_emergency_phone = #defaultEmergencyPhone#</isNotNull>
+      <isNotNull prepend=", " property="defaultShirtSize">default_shirt_size = #defaultShirtSize#</isNotNull>
+      <isNotNull prepend=", " property="defaultShoeSize">default_shoe_size = #defaultShoeSize#</isNotNull>
+      <isNotNull prepend=", " property="occupation">occupation = #occupation#</isNotNull>
+      <isNotNull prepend=", " property="selfDescription">self_description = #selfDescription#</isNotNull>
+      <isNotNull prepend=", " property="hobbiesInterests">hobbies_interests = #hobbiesInterests#</isNotNull>
+      <isNotNull prepend=", " property="favoriteQuote">favorite_quote = #favoriteQuote#</isNotNull>
+      <isNotNull prepend=", " property="favoriteThings">favorite_things = #favoriteThings#</isNotNull>
+      <isNotNull prepend=", " property="website">website = #website#</isNotNull>
+      <isNotNull prepend=", " property="isDisabled">is_disabled = #isDisabled#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertPerson" parameterClass="person">
+    INSERT INTO PERSON (id, identity_id, email, first_name, last_name, city, region, country, zip, gender, birthday, home_phone, cell_phone, work_phone, default_emergency_contact_first_name, default_emergency_contact_last_name, default_emergency_contact_relation, default_emergency_phone, default_shirt_size, default_shoe_size, occupation, self_description, hobbies_interests, favorite_quote, favorite_things, website, is_disabled, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="identityId">#identityId#</isNotNull>
+      <isNull prepend=", " property="identityId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="email">#email#</isNotNull>
+      <isNull prepend=", " property="email">DEFAULT</isNull>
+      <isNotNull prepend=", " property="firstName">#firstName#</isNotNull>
+      <isNull prepend=", " property="firstName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="lastName">#lastName#</isNotNull>
+      <isNull prepend=", " property="lastName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="city">#city#</isNotNull>
+      <isNull prepend=", " property="city">DEFAULT</isNull>
+      <isNotNull prepend=", " property="region">#region#</isNotNull>
+      <isNull prepend=", " property="region">DEFAULT</isNull>
+      <isNotNull prepend=", " property="country">#country#</isNotNull>
+      <isNull prepend=", " property="country">DEFAULT</isNull>
+      <isNotNull prepend=", " property="zip">#zip#</isNotNull>
+      <isNull prepend=", " property="zip">DEFAULT</isNull>
+      <isNotNull prepend=", " property="gender">#gender#</isNotNull>
+      <isNull prepend=", " property="gender">DEFAULT</isNull>
+      <isNotNull prepend=", " property="birthday">#birthday#</isNotNull>
+      <isNull prepend=", " property="birthday">DEFAULT</isNull>
+      <isNotNull prepend=", " property="homePhone">#homePhone#</isNotNull>
+      <isNull prepend=", " property="homePhone">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cellPhone">#cellPhone#</isNotNull>
+      <isNull prepend=", " property="cellPhone">DEFAULT</isNull>
+      <isNotNull prepend=", " property="workPhone">#workPhone#</isNotNull>
+      <isNull prepend=", " property="workPhone">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactFirstName">#defaultEmergencyContactFirstName#</isNotNull>
+      <isNull prepend=", " property="defaultEmergencyContactFirstName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactLastName">#defaultEmergencyContactLastName#</isNotNull>
+      <isNull prepend=", " property="defaultEmergencyContactLastName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultEmergencyContactRelation">#defaultEmergencyContactRelation#</isNotNull>
+      <isNull prepend=", " property="defaultEmergencyContactRelation">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultEmergencyPhone">#defaultEmergencyPhone#</isNotNull>
+      <isNull prepend=", " property="defaultEmergencyPhone">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultShirtSize">#defaultShirtSize#</isNotNull>
+      <isNull prepend=", " property="defaultShirtSize">DEFAULT</isNull>
+      <isNotNull prepend=", " property="defaultShoeSize">#defaultShoeSize#</isNotNull>
+      <isNull prepend=", " property="defaultShoeSize">DEFAULT</isNull>
+      <isNotNull prepend=", " property="occupation">#occupation#</isNotNull>
+      <isNull prepend=", " property="occupation">DEFAULT</isNull>
+      <isNotNull prepend=", " property="selfDescription">#selfDescription#</isNotNull>
+      <isNull prepend=", " property="selfDescription">DEFAULT</isNull>
+      <isNotNull prepend=", " property="hobbiesInterests">#hobbiesInterests#</isNotNull>
+      <isNull prepend=", " property="hobbiesInterests">DEFAULT</isNull>
+      <isNotNull prepend=", " property="favoriteQuote">#favoriteQuote#</isNotNull>
+      <isNull prepend=", " property="favoriteQuote">DEFAULT</isNull>
+      <isNotNull prepend=", " property="favoriteThings">#favoriteThings#</isNotNull>
+      <isNull prepend=", " property="favoriteThings">DEFAULT</isNull>
+      <isNotNull prepend=", " property="website">#website#</isNotNull>
+      <isNull prepend=", " property="website">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDisabled">#isDisabled#</isNotNull>
+      <isNull prepend=", " property="isDisabled">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deletePersonById" parameterClass="string">
+    DELETE
+    FROM PERSON
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

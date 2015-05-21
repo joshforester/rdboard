@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="DataResource">
+
+  <typeAlias alias="dataResource" type="com.myrunning.leaderboard.model.DataResource"/>
+  <typeAlias alias="idAndAdminIdQuery" type="com.myrunning.leaderboard.db.dao.query.IdAndAdminIdQuery"/>
+
+  <resultMap id="dataResourceResult" class="dataResource">
+    <result property="id" column="id" />
+    <result property="adminId" column="admin_id" />
+  </resultMap>
+
+  <select id="getDataResourceById" resultMap="dataResourceResult" parameterClass="string">
+    SELECT *
+    FROM DATA_RESOURCE
+    WHERE id = #value#
+  </select>
+
+  <select id="getDataResourceByIdAndAdminId" resultMap="dataResourceResult" parameterClass="idAndAdminIdQuery">
+    SELECT *
+    FROM DATA_RESOURCE
+    WHERE id = #id#
+      AND admin_id = #adminId#
+  </select>
+
+  <select id="getDataResourcesByAdminId" resultMap="dataResourceResult" parameterClass="string">
+    SELECT *
+    FROM DATA_RESOURCE
+    WHERE admin_id = #value#
+  </select>
+
+  <update id="updateDataResource" parameterClass="dataResource">
+    UPDATE DATA_RESOURCE
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="adminId">admin_id = #adminId#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertDataResource" parameterClass="dataResource">
+    INSERT INTO DATA_RESOURCE (id, admin_id)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="adminId">#adminId#</isNotNull>
+      <isNull prepend=", " property="adminId">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteDataResourceById" parameterClass="string">
+    DELETE
+    FROM DATA_RESOURCE
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

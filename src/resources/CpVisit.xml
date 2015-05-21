@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="CpVisit">
+
+  <typeAlias alias="teamIdAndCpIdQuery" type="com.myrunning.leaderboard.db.dao.query.TeamIdAndCpIdQuery"/>
+  <typeAlias alias="teamIdAndRangeQuery" type="com.myrunning.leaderboard.db.dao.query.TeamIdAndRangeQuery"/>
+  <typeAlias alias="courseIdAndRangeQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndRangeQuery"/>
+  <typeAlias alias="cpVisit" type="com.myrunning.leaderboard.model.CpVisit"/>
+  <typeAlias alias="decoratedCpVisit" type="com.myrunning.leaderboard.model.DecoratedCpVisit"/>
+
+
+  <resultMap id="cpVisitResult" class="cpVisit">
+    <result property="teamId" column="team_id" />
+    <result property="cpId" column="cp_id" />
+    <result property="divisionPlace" column="division_place" />
+    <result property="coursePlace" column="course_place" />
+    <result property="lastModified" column="last_modified" />
+    <result property="arrival" column="arrival" />
+    <result property="departure" column="departure" />
+    <result property="timeBonusAssessed" column="time_bonus_assessed" />
+    <result property="timePenaltyAssessed" column="time_penalty_assessed" />
+    <result property="cpBonusAssessed" column="cp_bonus_assessed" />
+    <result property="cpPenaltyAssessed" column="cp_penalty_assessed" />
+    <result property="weightBonusAssessed" column="weight_bonus_assessed" />
+    <result property="weightPenaltyAssessed" column="weight_penalty_assessed" />
+    <result property="bonusAssessedReason" column="bonus_assessed_reason" />
+    <result property="penaltyAssessedReason" column="penalty_assessed_reason" />
+    <result property="isAcquired" column="is_acquired" />
+    <result property="isSkipped" column="is_skipped" />
+    <result property="isMissedCutoff" column="is_missed_cutoff" />
+    <result property="isUnofficial" column="is_unofficial" />
+    <result property="isIncomplete" column="is_incomplete" />
+    <result property="isWithdrawn" column="is_withdrawn" />
+    <result property="isDisqualified" column="is_disqualified" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <resultMap id="decoratedCpVisitResult" class="decoratedCpVisit">
+    <result property="teamId" column="team_id" />
+    <result property="cpId" column="cp_id" />
+    <result property="divisionPlace" column="division_place" />
+    <result property="coursePlace" column="course_place" />
+    <result property="lastModified" column="last_modified" />
+    <result property="arrival" column="arrival" />
+    <result property="departure" column="departure" />
+    <result property="timeBonusAssessed" column="time_bonus_assessed" />
+    <result property="timePenaltyAssessed" column="time_penalty_assessed" />
+    <result property="cpBonusAssessed" column="cp_bonus_assessed" />
+    <result property="cpPenaltyAssessed" column="cp_penalty_assessed" />
+    <result property="weightBonusAssessed" column="weight_bonus_assessed" />
+    <result property="weightPenaltyAssessed" column="weight_penalty_assessed" />
+    <result property="bonusAssessedReason" column="bonus_assessed_reason" />
+    <result property="penaltyAssessedReason" column="penalty_assessed_reason" />
+    <result property="isAcquired" column="is_acquired" />
+    <result property="isSkipped" column="is_skipped" />
+    <result property="isMissedCutoff" column="is_missed_cutoff" />
+    <result property="isUnofficial" column="is_unofficial" />
+    <result property="isIncomplete" column="is_incomplete" />
+    <result property="isWithdrawn" column="is_withdrawn" />
+    <result property="isDisqualified" column="is_disqualified" />
+    <result property="isDeleted" column="is_deleted" />
+    <result property="teamName" column="team_name" />
+    <result property="teamNumber" column="team_number" />
+    <result property="cpCpOrder" column="cp_cp_order" />
+    <result property="cpName" column="cp_name" />
+    <result property="cpTaName" column="cp_ta_name" />
+  </resultMap>
+
+  <select id="getCpVisitByTeamIdAndCpId" resultMap="cpVisitResult" parameterClass="teamIdAndCpIdQuery">
+    SELECT *
+    FROM CP_Visit_Rel
+    WHERE team_id = #teamId#
+      AND cp_id = #cpId#
+  </select>
+
+  <select id="getDecoratedCpVisitByTeamIdAndCpId" resultMap="decoratedCpVisitResult" parameterClass="teamIdAndCpIdQuery">
+    SELECT cvr.*, t.name AS team_name, t.number AS team_number, c.cp_order AS cp_cp_order, c.name AS cp_name, c.ta_name AS cp_ta_name
+    FROM CP_Visit_Rel cvr, TEAM t, CP c
+    WHERE cvr.team_id = #teamId#
+      AND cvr.team_id = t.id
+      AND cvr.cp_id = #cpId#
+      AND cvr.cp_id = c.id
+  </select>
+
+  <select id="getCpVisitsByTeamId" resultMap="cpVisitResult" parameterClass="teamIdAndRangeQuery">
+    SELECT *
+    FROM CP_Visit_Rel
+    WHERE team_id = #id#
+    <dynamic>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND last_modified >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND last_modified < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+  <select id="getDecoratedCpVisitsByTeamId" resultMap="decoratedCpVisitResult" parameterClass="teamIdAndRangeQuery">
+    SELECT cvr.*, t.name AS team_name, t.number AS team_number, c.cp_order AS cp_cp_order, c.name AS cp_name, c.ta_name AS cp_ta_name
+    FROM CP_Visit_Rel cvr, TEAM t, CP c
+    WHERE team_id = #id#
+      AND cvr.cp_id = c.id
+      AND cvr.team_id = t.id
+    <dynamic>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND last_modified >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND last_modified < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+  <select id="getCpVisitsByCourseId" resultMap="cpVisitResult" parameterClass="courseIdAndRangeQuery">
+    SELECT *
+    FROM CP_Visit_Rel cvr, CP c
+    WHERE c.course_id = #id#
+      AND cvr.cp_id = c.id
+    <dynamic>
+      <isNotNull property="start">
+      <![CDATA[ 
+      AND cvr.last_modified >= #start#
+      ]]>
+      </isNotNull>
+      <isNotNull property="end">
+      <![CDATA[ 
+      AND cvr.last_modified < #end#
+      ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+  <select id="getDecoratedCpVisitsByCourseId" resultMap="decoratedCpVisitResult" parameterClass="courseIdAndRangeQuery">
+    SELECT cvr.*, t.name AS team_name, t.number AS team_number, c.cp_order AS cp_cp_order, c.name AS cp_name, c.ta_name AS cp_ta_name
+    FROM CP_Visit_Rel cvr, TEAM t, CP c
+    WHERE c.course_id = #id#
+      AND cvr.cp_id = c.id
+      AND cvr.team_id = t.id
+    <dynamic>
+      <isNotNull property="start">
+      <![CDATA[ 
+      AND cvr.last_modified >= #start#
+      ]]>
+      </isNotNull>
+      <isNotNull property="end">
+      <![CDATA[ 
+      AND cvr.last_modified < #end#
+      ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+  <select id="getCpVisitsByCpId" resultMap="cpVisitResult" parameterClass="string">
+    SELECT *
+    FROM CP_Visit_Rel
+    WHERE cp_id = #value#
+  </select>
+
+  <update id="updateCpVisit" parameterClass="cpVisit">
+    UPDATE CP_Visit_Rel
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="divisionPlace">division_place = #divisionPlace#</isNotNull>
+      <isNotNull prepend=", " property="coursePlace">course_place = #coursePlace#</isNotNull>
+      <isNotNull prepend=", " property="lastModified">last_modified = #lastModified#</isNotNull>
+      <isNotNull prepend=", " property="arrival">arrival = #arrival#</isNotNull>
+      <isNotNull prepend=", " property="departure">departure = #departure#</isNotNull>
+      <isNotNull prepend=", " property="timeBonusAssessed">time_bonus_assessed = #timeBonusAssessed#</isNotNull>
+      <isNotNull prepend=", " property="timePenaltyAssessed">time_penalty_assessed = #timePenaltyAssessed#</isNotNull>
+      <isNotNull prepend=", " property="cpBonusAssessed">cp_bonus_assessed = #cpBonusAssessed#</isNotNull>
+      <isNotNull prepend=", " property="cpPenaltyAssessed">cp_penalty_assessed = #cpPenaltyAssessed#</isNotNull>
+      <isNotNull prepend=", " property="weightBonusAssessed">weight_bonus_assessed = #weightBonusAssessed#</isNotNull>
+      <isNotNull prepend=", " property="weightPenaltyAssessed">weight_penalty_assessed = #weightPenaltyAssessed#</isNotNull>
+      <isNotNull prepend=", " property="bonusAssessedReason">bonus_assessed_reason = #bonusAssessedReason#</isNotNull>
+      <isNotNull prepend=", " property="penaltyAssessedReason">penalty_assessed_reason = #penaltyAssessedReason#</isNotNull>
+      <isNotNull prepend=", " property="isAcquired">is_acquired = #isAcquired#</isNotNull>
+      <isNotNull prepend=", " property="isSkipped">is_skipped = #isSkipped#</isNotNull>
+      <isNotNull prepend=", " property="isMissedCutoff">is_missed_cutoff = #isMissedCutoff#</isNotNull>
+      <isNotNull prepend=", " property="isUnofficial">is_unofficial = #isUnofficial#</isNotNull>
+      <isNotNull prepend=", " property="isIncomplete">is_incomplete = #isIncomplete#</isNotNull>
+      <isNotNull prepend=", " property="isWithdrawn">is_withdrawn = #isWithdrawn#</isNotNull>
+      <isNotNull prepend=", " property="isDisqualified">is_disqualified = #isDisqualified#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE team_id = #teamId#
+      AND cp_id = #cpId#
+  </update>
+
+  <insert id="insertCpVisit" parameterClass="cpVisit">
+    INSERT INTO CP_Visit_Rel (team_id, cp_id, division_place, course_place, last_modified, arrival, departure, time_bonus_assessed, time_penalty_assessed, cp_bonus_assessed, cp_penalty_assessed, weight_bonus_assessed, weight_penalty_assessed, bonus_assessed_reason, penalty_assessed_reason, is_acquired, is_skipped, is_missed_cutoff, is_unofficial, is_incomplete, is_withdrawn, is_disqualified, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="teamId">#teamId#</isNotNull>
+      <isNull prepend=", " property="teamId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cpId">#cpId#</isNotNull>
+      <isNull prepend=", " property="cpId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="divisionPlace">#divisionPlace#</isNotNull>
+      <isNull prepend=", " property="divisionPlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="coursePlace">#coursePlace#</isNotNull>
+      <isNull prepend=", " property="coursePlace">DEFAULT</isNull>
+      <isNotNull prepend=", " property="lastModified">#lastModified#</isNotNull>
+      <isNull prepend=", " property="lastModified">DEFAULT</isNull>
+      <isNotNull prepend=", " property="arrival">#arrival#</isNotNull>
+      <isNull prepend=", " property="arrival">DEFAULT</isNull>
+      <isNotNull prepend=", " property="departure">#departure#</isNotNull>
+      <isNull prepend=", " property="departure">DEFAULT</isNull>
+      <isNotNull prepend=", " property="timeBonusAssessed">#timeBonusAssessed#</isNotNull>
+      <isNull prepend=", " property="timeBonusAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="timePenaltyAssessed">#timePenaltyAssessed#</isNotNull>
+      <isNull prepend=", " property="timePenaltyAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cpBonusAssessed">#cpBonusAssessed#</isNotNull>
+      <isNull prepend=", " property="cpBonusAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cpPenaltyAssessed">#cpPenaltyAssessed#</isNotNull>
+      <isNull prepend=", " property="cpPenaltyAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="weightBonusAssessed">#weightBonusAssessed#</isNotNull>
+      <isNull prepend=", " property="weightBonusAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="weightPenaltyAssessed">#weightPenaltyAssessed#</isNotNull>
+      <isNull prepend=", " property="weightPenaltyAssessed">DEFAULT</isNull>
+      <isNotNull prepend=", " property="bonusAssessedReason">#bonusAssessedReason#</isNotNull>
+      <isNull prepend=", " property="bonusAssessedReason">DEFAULT</isNull>
+      <isNotNull prepend=", " property="penaltyAssessedReason">#penaltyAssessedReason#</isNotNull>
+      <isNull prepend=", " property="penaltyAssessedReason">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isAcquired">#isAcquired#</isNotNull>
+      <isNull prepend=", " property="isAcquired">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isSkipped">#isSkipped#</isNotNull>
+      <isNull prepend=", " property="isSkipped">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isMissedCutoff">#isMissedCutoff#</isNotNull>
+      <isNull prepend=", " property="isMissedCutoff">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isUnofficial">#isUnofficial#</isNotNull>
+      <isNull prepend=", " property="isUnofficial">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isIncomplete">#isIncomplete#</isNotNull>
+      <isNull prepend=", " property="isIncomplete">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isWithdrawn">#isWithdrawn#</isNotNull>
+      <isNull prepend=", " property="isWithdrawn">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDisqualified">#isDisqualified#</isNotNull>
+      <isNull prepend=", " property="isDisqualified">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteCpVisitByTeamIdAndCpId" parameterClass="teamIdAndCpIdQuery">
+    DELETE
+    FROM CP_Visit_Rel
+    WHERE team_id = #teamId#
+      AND cp_id = #cpId#
+  </delete>
+
+</sqlMap>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Update">
+
+  <typeAlias alias="idAndTypeAndRangeQuery" type="com.myrunning.leaderboard.db.dao.query.IdAndTypeAndRangeQuery"/>
+  <typeAlias alias="update" type="com.myrunning.leaderboard.model.Update"/>
+ 
+  <resultMap id="updateResult" class="update">
+    <result property="id" column="id" />
+    <result property="teamId" column="team_id" />
+    <result property="time" column="time" />
+    <result property="type" column="type" />
+    <result property="message" column="message" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+
+  <select id="getUpdateById" resultMap="updateResult" parameterClass="string">
+    SELECT *
+    FROM UPD
+    WHERE id = #id#
+  </select>
+
+
+  <select id="getUpdatesByTeamId" resultMap="updateResult" parameterClass="IdAndTypeAndRangeQuery">
+    SELECT *
+    FROM UPD
+    WHERE team_id = #id#
+    <dynamic>
+      <isNotNull property="type">
+	<![CDATA[ 
+        AND type >= #type#
+        ]]>
+      </isNotNull>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+
+  <select id="getUpdatesByCourseId" resultMap="updateResult" parameterClass="IdAndTypeAndRangeQuery">
+    SELECT u.*
+    FROM UPD u, TEAM t
+    WHERE u.team_id = t.id
+      AND t.course_id = #id#
+    <dynamic>
+      <isNotNull property="type">
+	<![CDATA[ 
+        AND u.type >= #type#
+        ]]>
+      </isNotNull>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND u.time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND u.time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+
+  <select id="getUpdatesByEventId" resultMap="updateResult" parameterClass="IdAndTypeAndRangeQuery">
+    SELECT u.*
+    FROM UPD u, TEAM t, COURSE c
+    WHERE u.team_id = t.id
+      AND t.course_id = c.id
+      AND c.event_id = #id#
+    <dynamic>
+      <isNotNull property="type">
+	<![CDATA[ 
+        AND u.type >= #type#
+        ]]>
+      </isNotNull>
+      <isNotNull property="start">
+	<![CDATA[ 
+        AND u.time >= #start#
+        ]]>
+      </isNotNull>
+      <isNotNull property="end">
+	<![CDATA[ 
+        AND u.time < #end#
+        ]]>
+      </isNotNull>
+    </dynamic>
+  </select>
+
+
+  <insert id="insertUpdate" parameterClass="update">
+    INSERT INTO UPD (id, team_id, time, type, message, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="teamId">#teamId#</isNotNull>
+      <isNull prepend=", " property="teamId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="time">#time#</isNotNull>
+      <isNull prepend=", " property="time">DEFAULT</isNull>
+      <isNotNull prepend=", " property="type">#type#</isNotNull>
+      <isNull prepend=", " property="type">DEFAULT</isNull>
+      <isNotNull prepend=", " property="message">#message#</isNotNull>
+      <isNull prepend=", " property="message">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+</sqlMap>

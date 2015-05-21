@@ -1,0 +1,474 @@
+* - input mechanisms for leadership algorithm (replaces ranking method).  see below.  add Comparator table.  ranking method should allow RD to determine custom ranking algorithm.  
+*-- need to figure out how to deal with punch only (no time recorded) as well as comparators.
+*-- need to calculate in bonuses and penalties on comparators
+-- need to fix the mandatory group stuff in Control Point and alter leaderboard to deal with it
+-- the ranking algorithm should allow for folks to display the leaderboard over time, also allowing a "replay" of the race.  this may mean a timestamping of CP_Visit entries.
+--- best way to do this is with a back 1 hour/forward 1 hour ajax call.  replicate this for the auto-refresh ajax call.
+-- after teams are pulled from the db, should be sorted based on previous placing.  this will be much faster than ChainComparator but will prep the ChainComparator sort later because the list will be "mostly" sorted by the time ChainComparator kicks in.  
+*-- Persist placings in COURSE_RANK table (team, cp, timestamp, overall_rank, division_rank).  Do this for EVERY team upon every cpvisit add/edit/batch edit--though the latter operation would probably be best to do transactionally (need to handle this at the service layer--perhaps a service method to accept a list and save them all) only once after full batch edit is complete.  Rank leaderboard and timestamp all teams.  Needs to answer 2 questions:  what was team's rank at timeX)?  what was teams rank at cpX?  COURSE_RANK cp column will be sparse, because a cpvisit add/edit/batch edit will _SAVE_ 2 rows per team/cp: one for the time the team entered the CP (if arrival/departure entered), and one for the time the cpvisit add/edit/edit batch was made (which has no CP associated with it).  for all other unedited teams, 1 row for the latter.  the latter deals with the state of the leaderboard (so these entries should be only added--no saving).   
+
+algo {
+   save all cpVisits
+   generate leaderboard with ranked teams
+   for each cpVisit {
+     insert COURSE_RANK entry for teamY at CPx
+   }
+   for each team {
+     insert COURSE_RANK entry at timeZ
+   }
+}
+    
+
+apply set of edit/addCpVisits for each CP {
+  generate leaderboard with ranked teams
+  SAVE rank at CP for each team
+  add rank at time for reach team
+}
+
+follow up UI questions from this data might be:
+--- how has rank changed between cpX and cpY?  compared against Z teams?
+--- how has rank changed between timestampX and timestampY?  compared against Z teams?
+--- define the "momentum" of a team over time (accelleration of rank change).
+--- use JS json call to "play back" the leaderboard progress over accellerated time.
+-- figure out how to handle the scenario where leaderboard needs to rank teams on an incomplete CP list.  for instance, won't be able to see manned/unmanned CPs.  2 components here--factor into rankings, and display on leaderboard.  
+
+-- look back reality ranking (now that we have complete data for CPx, what was the real rank of teamY when they reached it?  rank at CP deals with reality (so these entries should be refined as data is entered--save rank).  
+
+algo:
+for each CpVisit {
+    insert CpVisit
+    generate leaderboard at time of cpVisit with ranked teams:
+      select * 
+      from CP_Visit_Rel 
+      where (arrival < ${time}) AND arrival != 0) 
+         OR (departure < ${time}) AND departure != 0)
+	 OR skipped/acquired CPs before time of cpVisit
+    save rank for that CP for all teams
+}
+problem above in that no way to know when skipped/acquired CPs actually 
+skipped/acquired.  can approximate in the following ways:
+1.  skipped/acquired cpVisit has same timestamp as lastModified cpVisit
+    with arrival/departure < ${time}
+    - this means skipped/acquired CP was entered with other CP, which 
+      suggests a TA with previous unmanned CPs
+    - an update to the manned cp means the skipped/acquired are no longer
+      associated with it and won't be considered for ranking (false negative)
+2.  skipped/acquired cpVisit has timestamp that is before ${time}
+    - this means skipped/acquired CP was entered before team even arrived
+      to the CP
+    - an update to the skipped/acquired CP means it will NOT be considered
+      in the ranking (false negative)
+3. skipped/acquired cpVisit has cpOrder that is < cpOrder
+    - works for non-rogaine courses
+    - would include skipped/acquired cpVisits in rogaine course that occurred
+      much later than CP (false positives)
+
+- get ControlPointServiceLocal call to HeyWhatsThatServiceLocal @Async working.  Test using Thread.sleep in ControlPointServiceLocal.  Something's up with @Async, as it is blocking.
+
+- look into optimizing leaderboard page size by using jquery to reuse common elements like titles?  may be moot since http gz compresses those anyway, and also disadvantageous as no JS means no titles but a thought.
+
+- in jquery, should modify each rdb_panel class to inject a header such that it is minimizable.  wrap header h1 in, right float a minimize/maximize icon, and on click of icons, minimize/maximize the panel to the size of the header.  similar to jpolite panels:
+http://www.trilancer.com/jpolite2/index1.html
+
+- ajax for updates appears to not work at longer settings.  what gives?
+
+- consolidate CpVisitController, EditCpVisitController, and AddCpVisitController into SaveCpVisitController using annotations similar to the ListXController objects.
+
+- use google charts api to chart out rank/positional changes:
+-- teams' places over cps:
+http://chart.apis.google.com/chart?cht=lc&chd=t:1,2,2,3,4,5|2,3,4,4,2,1|3,4,3,2,1,2&chds=1,5,1,5,1,5&chxt=x,y&chxl=0:|CP1|CP2|CP3|CP4|CP5|Finish|1:|1st|2nd|3rd|4th|5th&chxp=0,1,2,3,4,5,6&chs=250x100&chxr=0,1,6|1,1,5&chdl=TeamA|TeamB|TeamC&chco=FF0000,00FF00,0000FF
+-- teams' momentum over cps:
+http://chart.apis.google.com/chart?cht=lc&chd=t:-2,-2,0,3|1,1,0,0&chds=-3,3,-3,3&chxt=x,y&chxl=0:|CP1|CP2|CP3|CP4|CP5|Finish|1:|-3|-2|-1|0|1|2|3&chs=350x200&chxr=0,1,6|1,1,5&chdl=TeamA|TeamB&chco=FF0000,00FF00
+-- rank momentum:
+http://chart.apis.google.com/chart?chs=225x125&cht=gom&chd=t:70&chl=Warming%20Up&chco=0000FF,FF0000
+-- or icon:
+http://chart.apis.google.com/chart?chs=50x40&cht=gom&chd=t:70&chco=0000FF,FF0000
+
+- create a util Sorter that contains all the sortBlah() methods in the daos.  These static methods will be accessible by both Service and Dao and all imports of Comparators will exist there.
+
+- modify update creation service calls to do asynchronous processing via the @Async annotation.
+
+- implement update type=Status, where status changes are inserted in the update field.
+-- best to put in CpVisitService.persistCpVisit?
+-- also, may be good to move CpVisit update to there as well.
+
+- jqGrid for table cell generation/editing/sorting
+
+*- update Timestamp formatter el functions to output Javascript to correctly format date?
+*-- modify taglib to support localized boolean attribute.  Lest you localize already-localized content.  default localize: false.
+*-- should support no-js, which means creating:
+<span class="time">34:43 GMT<span class="ts">13413431431413|HH:mm</span></span>
+then replacing ts's contents with formatted ts's contents.
+*-- should support formatting in the JS, so formatted version is supported.
+*-- need to make 2 JS files in each script section for RDB--one common and one specific.  no need to duplicate the JS everywhere.
+
+- as part of cp statistics, should generate first 3 teams to arrive at a checkpoint
+
+- add is_manned field to control point
+
+- need a way to represent where the race field is (at what CP) by using last cp visit.  ideally, we could show an accordian?  that has team counts at each CP, then click to expand and show which teams.
+
+- need to actually show ranking place on team list in leaderboard
+
+- recent updates header should be a link to view recent updates page?
+
+- Time off leader's appearance at CP.  how to do this?  not sure, since leader into cp isn't necessarily leader of the race and time off of the true leader of the race's entry to the CP doesn't mean distance away from team as team comparing against may be CPs down from leader...perhaps all stats (time off leader, cps off leader, weight off leader, etc. at each CPVisit).
+-- or generalize such that you can do a VERSUS view.  comparing two teams against one another.
+
+- raw leaderboard view appears to have scroll bars for large leaderboards?  look to css issues 
+
+*- IE display bug in listControlPointsGmap where div class="row" shows as full width popup over gmap marker.  this is result of float:right of cp_icons and min-width/width of 100% in div.row CSS.  without these two, however, FF brings attributes up alongside cp_icons rather than clearing them below (because they aren't floated methinks).  
+
+- use the <c:param> jstl for all URLs that have GET variables:
+http://www.ibm.com/developerworks/library/j-jstl0318/
+
+*- expand layout to default to 1024px width screen
+*-- update editCPVisitBatch to collapse the two rows on basic form to 1.
+
+- use datepicker for things that require date like event form.  http://jqueryui.com/demos/datepicker/
+
+*- use Tiles to generate Javascript:
+http://faq.javaranch.com/java/TilesJavaScript
+
+* use blocking overlay (see jquery tools or blockUI) on form submissions
+*- editCpVisitBatch
+
+*- use jquerytools for tooltips and form fields:
+http://flowplayer.org/tools/index.html
+*- tooltips
+*-- editCpVisitBatch
+- form fields
+-- editCpVisitBatch
+
+- editAdmin.htm will error out if admin address already exists.  need to separate validators.
+
+*- update leastskipped comparator ranking method to be checkpoints - skipped checkpoints
+
+*- display rss feeds on web page via iframe/JS/AJAX call?
+*-- http://xfruits.com/jforest1/?id=90420
+*-- http://www.google.com/help/reader/sharing.html (http://www.google.com/reader/shared/13630472463511298754)
+*-- http://www.webrss.com/display-rss.php
+*-- http://www.feedbucket.com/
+*-- http://feeds.feedburner.com/TestAggregator
+*-- http://feedburner.google.com/fb/a/buzzboost?id=pmjtb1gkdmvj3cgqeq2m29di8s
+
+- stream in updates to the leaderboard via a portal/dashboard layout.  use http://www.learningjquery.com/2007/01/effect-delay-trick with long delay to show updates.  also use vertical scrollable to ensure they don't grow too large.  http://flowplayer.org/tools/demos/scrollable/vertical.html
+-- use a getUpdate service so both RSS generator and webpage can grab them
+
+*- on editCpVisitBatch form, error for departure being before arrival should display cp id, name, etc. as the error for isSkipped, arrival, departure all being checked does.  global error should match ids with displayed form fields.
+
+*- integrate with google maps such that it displays ALL cps on map.
+*-- shows topo overlay, mytopo overlay, etc.
+*-- display cp info as well
+*--- implement get skipped and get acquired -- need to implement generateStatistics in ControlPoint
+*-- display cpvisits as well
+*--- need to ensure overflow-y container is set.
+- integrate with google maps such that it displays ALL teams on map.
+-- display team info as well
+-- display cpvisits as well
+
+- add event time filters for certain data that should not be viewed by competitors:
+-- course description
+-- cps
+-- google map?  if done at the service layer, shouldn't be an issue...but care must be taken as admin need to see them...
+
+- need to add RDValidationUtils.rejectIfNotProvided for fields that must be set (example:  Add Control Point has no id submitted when not logged in because it doesn't populate the event list).
+
+*- on editCpBatch, in saveCp need to actually compare CPVisit vs. db version in the case of edits, so that lastModified time is not updated if its not truly updated.  currently, all existing CPs are updated, even though they may have not changed, which results in lastModified time being automatically updated.
+
+*- for each course, include a link to go to a message board/forum.
+*-- CiL:
+http://www.coveritlive.com/index.php?option=com_altcaster&task=siteviewaltcast&altcast_code=a55d6c7c98&height=550&width=470
+*-- ScribbleLive:
+http://embed.scribblelive.com/1/0/8/9/5/
+
+*- validate the new field per schemaUpgrade.20100117.sql
+
+- favicon redesign
+
+*- editCpVisitBatch validation to ensure skipped isn't checked with arrival/departure filled out
+
+*- edit cp visit is punched field which is opposite of is_skipped
+-- on edit cp visit from leaderboard, need toggle button directly to webapp to create CP visit that is punched (no times).  so multiple may be entered from the leaderboard without ever leaving it.
+*--- update validation to ensure times/is_skipped isn't entered as well
+*--- update both batch edit and cpvisit edit to reflect it
+*--- update chain comparator to account for it
+*--- update team statistics to account for it being punched.  perhaps make a method in CpVisit to do it?
+*--- include Jquery script to disable/enable appropriate fields when either isSkipped or isAcquired is checked/unchecked.
+
+*- redesign layout of edit CP Visit
+
+- layouts:  
+*-- LayoutController needs to be extended by all others, including annotated
+*-- tiles-defs.xml needs to be updated to include all the views for each in a scalable/sensible way
+-- the "layout" parameter should be stored in session in order to pass to error views and the like?
+-- m.rdboard.com may be a factor in layout, and in this case may need session storage of layout to come into play
+
+- add caching at the persistence layer with iBatis cacheModel config.  useful for leaderboard related queries.  
+-- reference:  http://www.developersbook.com/ibatis/iBatis-tutorials/iBatis-tutorials-3.php
+-- reference:  http://www.learntechnology.net/content/ibatis/spring_ibatis.jsp
+
+*- NEED TO LOOK INTO TRANSACTIONAL SQL STATEMENTS.  INSERTS/UPDATES ARE SUBJECT TO SYNCHRONIZATION ISSUES W.R.T. DB POOLING, AS LAST_INSERT_ID APPLIES ONLY TO CURRENT SESSION, WHICH MEANS IF YOU SWITCH THREADS BETWEEN DATA_RESOURCE INSERT AND LAST_INSERT_ID CALL THEN YOU ARE SCREWED.
+*-- create services out of the following DATA_RESOURCE objects
+*TEAM.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*COMPARATOR.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*COURSE.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*CP.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*DIVISION.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*EVENT.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*COMPETITOR.sql:    REFERENCES `DATA_RESOURCE` (`id`)
+*ADMIN.sql:    REFERENCES `PERSON` (`id`)
+*CPVisit Service
+*REGISTRATION SERVICE!!!!
+-- update with delete functions
+-- slowly weed out references to DAO objects in the web tier.  should only be accessed from the service layer
+
+- add/edit event should add Course Description WYSIWYG editor.
+*- add/edit course should add Course Description WYSIWYG editor.
+-- add javascript filter to protect against XSS attacks.
+*- add/edit course should include discussion board associated with event.
+-- one not provided?  start one using discus/facebook/similar to allow for discussion.
+-- if the latter, could automatically "tag" teams in posts so folks could view posts about a certain team.
+-- update leaderboard with link (currently stubbed out)
+
+*- during edit batch cp, com.myrunning.leaderboard.model.CpVisit.isDefaulted(CpVisit.java:430) threw exception
+
+- do something about military time entry issues...  accidentally putting in am time when should be PM!  perhaps a little JS that takes time and shows AM/PM beside?
+
+* mystery event image?  is there one?  isn't there a drop down?
+- start image?  is there one?  isn't there a drop down?
+- finish image?  is there one?  isn't there a drop down?
+
+- use LayoutController? (or super controller?) notion of decorating a view to return to.  view should first be that specified in successView but should also factor in URL of origin, which may be stored in the session (and removed after every return from a flow).  not sure if this is the BEST way to do it, but it is A way, and to keep it outside of the controllers would be best.  seems like needs to be added to session upon form display, and upon form submission, needs to be used but before view is returned removed from session so it won't linger to other requests?  hmmmm...  perhaps the "right" approach is just to modify the success views to go to most LIKELY input path, which is generally the list page.  however we trip up when we try to return to the list courses page, which requires an event id...  ANYWAY, see Add/Edit Division Controller, where EventId is passed to view.
+
+*- need to update editCpVisit icon on listLeaderboardsFull.jsp so that it links to add cpVisit controller
+
+*- need to create layer to handle time conversions based on Locale.  ex.  Last Modified time in course summary on listLeaderboards.jsp.  Note that probably means you should NOT adjust certain times like those entered by the course staff, but system generated times should be altered (mobile devices should generate their own time for cp entry)
+*-- http://j2eecookbook.blogspot.com/2007/06/formatting-date-to-client-timezone.html
+*-- http://static.springsource.org/spring/docs/3.0.0.RELEASE/spring-framework-reference/html/validation.html see section 5.6 on Formatters
+
+- controlPoint cutoff are validated against event times.  however, if event was edited they won't be revalidated.  how to notify/warn/error on the user?
+
+- probably shouldn't display weight for CPs that don't have it.  wish could figure out what to do about team display statistics.  perhaps calculate in course and if total weight is 0, assume it's not being used.
+
+- work on navigation and prepopulation of forms.  this means using reference data for most of the forms to prepopulate stuff.
+
+- fix UTM coordinate display on listLeaderboardsFull.jsp when set to default.
+
+- make control point a StatisticalUnit, calculate straightline distance to next CP using coordinates and trigonometry and altitude gain/loss, make Course a StatisticalUnit and total up distances and altitude gain/loss per discipline
+-- place calculations in list view of leaderboard
+
+- finish all of the validator logic
+-- add html <>/XSS filter to fields (ESAPI.Validator.getValidSafeHTML???)
+------------
+* ControlPointValidator:
+* AdminValidator.java
+-- edit admin should not require password, though add should.  edit should only require it if one was provided.  also, should require current password if so.  validate current password before allowing password update.
+* CompetitorValidator.java
+-- pending shoeSize validator
+* ControlPointValidator.java
+-- CP name should be <= 4 characters
+-- could do global validation error on coordinates...
+* PersonValidator.java
+-- global validation [message?] of identity needs property editor
+
+
+- provide pagination for List servlets.  can be done with queryForList(String statementName, int skipResults, int maxResults)
+
+
+- get head around and fix the team number, comparator order, and cp order? autogenerators.  not sure they will calculate order in all cases, also, think there is a bug mentioned elsewhere in this todo about it.  seems like the operation is the same as insert and add into a List.  where order is the index of the list.  same basic operation needs to be performed.  perhaps a select that pulls all the values into a list, do the insert, and then SAVE all the values back into the database?
+
+- improve edit cp batch so that team/cp are not disabled but rather labels
+-- collapse into prettier format
+-- change click space to actual expand icon/div/label
+-- improve layout of field entry parts
+-- update to have error messages in some sort of hover div or icon to improve layout/space efficiency 
+
+- add whitespace trimming (leading and trailing whitespace) to all input.  property editor phase?
+
+- add string length validators specific to inputs
+
+- add weird char/XSS filters on string input fields
+
+- website optimization:  http://developer.yahoo.com/performance/rules.html
+*-- ETag/lastModified since on leaderboard; prereq is fixing editCpVisitBatch to save cpVisits on edit
+-- image sprites
+
+- make property editors so "0" int fields disappear.  may cause problems for validators that check for int property = 0 to see if it wasn't entered (example:  ControlPoint.easternly).
+-- look to formatters for this? 
+
+- calculate time off lead/next team as part of placing calculations on leaderboard.  perhaps this isn't sufficient, since some courses may order by cps, but still nice to see for those that do time.
+
+- add division should be modified so that you can allow multiple member count/consistency combos.  new db table that has id refernces division, member count, consistency.  this will allow having multiple count/consistency combos in the same division.  also need to add consistency "all".
+
+- on edit object where timestamp exists, default 1970 will cause validation on occasion (edit CP) where is insane
+
+- prepopulate CP zone number/letter based on most common for course
+
+- on delete of CP, is order updated for all others?
+
+- combine competitor/team add above into registration form for team, course, division using webflow.
+-- validate member1Id is filled out to preserve captainship if the captain is dropped
+-- isolate flow data and move out of leaderboard-servlet.xml and into registration-flow.xml
+-- add validation to registration flow
+
+
+- add admin functionality and privacy settings.
+--  look into spring security + webflow
+-- add notion of admin_group with a group_id.  store group_id as well in DATA_RESOURCE table.  this would allow multiple people to add/edit data for event.  because data filter may be setup to filter based on group as well as owner.
+-- modify add admin for promoters to be able to create event staff in their group.  note that this will need to limit the add/edit admin to eventstaff authority.
+---problematic in that editCpBatch requires access to cp/team/cp visits/course!!!  though really should only require access to cp visits, as we aren't editing others (just reading).  perhaps break permissioning out to read/write access?
+--- Integrate with the following:
+*----CP_Visit_Rel, CPVisit_Batch, Team_Instance_Rel viewing may be cool for non-admins, but add/edit/delete may need ownership.
+-----Team_Instance_Rel
+
+Steps to migrate above:
+1.  modify table of object to reference DATA_RESOURCE
+2.  modify model object to not contain id and to extend DataResource
+3.  modify list, edit (form), edit (submit), delete, delete confirm, add to utilize DataAccessFilter; should have error message for each
+4.  protect URL with spring security so non-logged in user is redirected to login
+5.  modify reference data methods in super classes for their populate methods (don't want to return all EventCourses when adding a CP)
+6.  verify all foreign key references in added/edited object are also owned by admin, as adding a CpVisit that references a team not owned by admin should not be allowed.  so need to verify team is owned by admin.
+7.  ???
+
+
+- tagline:  
+"every race has a start and a finish.  let us be at both."
+ or
+"bringing the race to you"
+
+allow upload of teams in CSV format (look at StringUtils.commaDelimitedListToStringArray(String str) 
+import teams from CPT series.
+allow upload of CPVisits in CSV format (this would work for when the internet coverage is down (a work offline option).
+allow exporting of teams/results/etc. to comma delimited format (look into Spring view mechanisms or StringUtils.collectionToCommaDelimitedString(Collection coll) )
+- http://static.springsource.org/spring/docs/3.0.0.RELEASE/spring-framework-reference/html/view.html#view-feeds 16.7 Jasper Reports
+*get authentication/admin functionality working.
+get pangea-like/ar widows club icons working.
+person-centric team--who is in "josh's team", based on past events, not based on commitments?
+color code CP name and team name header boxes in leaderboard based on progression of the race.
+use previous registration details for person in registration app.
+integrate heywhatsthat.com functionality to generate views per CP upon add/edit.-
+---------------------------------------------------------------------------------
+reverse engineered for RD board.
+ 
+http://www.heywhatsthat.com/bin/query.cgi?lat=34.177326&lon=-84.089569&elev=1.8288000000000002&elev_is_absolute=0&name=Da%20houze&public=0&return_data=1 
+ 
+or simplified:
+http://www.heywhatsthat.com/bin/query.cgi?lat=34.177326&lon=-84.089569&name=Da%20houze%202&public=0&return_data=1
+ 
+and result:
+O4F2L9NK queued 34.177326 -84.089569 - 2 1257878959 0 0 0 0 wt Da houze 2 
+ 
+takes a few minutes to generate view after initial response.
+ 
+and destination:
+http://www.heywhatsthat.com/?view=O4F2L9NK
+ 
+or mobile:
+http://www.heywhatsthat.com/iphone/pan.cgi?id=LE79EEFN
+ 
+could do this on CP edit (if updated from previous version).  translate to GPS coords and send of http client request.  parse the view ID from the response and store in DB as CP metadata.  display link to view from CP id.  since CP edit/add will likely be well before race, don't have to worry about delay for view generation.
+----------------------------------------------------------------------------------
+
+rss feeds for updates to leaderboard, rss feeds for each team and team updates
+- look to Spring 3.0 AtomView and RSSView for that:  http://blog.springsource.com/2009/03/08/rest-in-spring-3-mvc/
+- http://www.stupidjavatricks.com/?p=54
+- http://static.springsource.org/spring/docs/3.0.0.RELEASE/spring-framework-reference/html/mvc.html#mvc-multiple-representations 15.5.4
+- http://stsmedia.net/spring-finance-part-7-adding-support-for-json-and-xml-views/
+- http://www.jroller.com/eyallupu/entry/content_negotiation_using_spring_mvc
+- for auth, look at @RequestHeader annotation here:  
+http://static.springsource.org/spring/docs/3.0.0.M3/spring-framework-reference/html/ch16s11.html
+16.11.9 Mapping request header attributes with the @RequestHeader annotation
+-- update add/edit controllers to be annotated:
+*--- event
+*--- course
+*--- division
+*--- cp
+*--- cp visit
+*--- batch cp visit
+--- comparator
+--- competitor
+--- admin
+*--- team
+-- annotate model objects to spit out correct XML http://xstream.codehaus.org/annotations-tutorial.html
+---Admin
+---Comparator
+*---Competitor
+*---ControlPoint
+*---Course
+*---CpVisit
+*---DataResource
+*---Division
+*---Event
+---Identity
+---Leaderboard
+*---Person
+---Registration
+---Rank
+*---Team
+-- annotate model objects to spit out correct JSON
+---Admin
+---Comparator
+*---Competitor
+*---ControlPoint
+*---Course
+*---CpVisit
+*---DataResource
+*---Division
+*---Event
+---Identity
+---Leaderboard
+*---Person
+---Registration
+---Rank
+*---Team
+
+- add com.myrunning.leaderboard.global.AuthenticatedUserFilter lines that take authentication credentials from the URL and add them to the session (may require going through Spring Security AuthenticationManager) so that RequestHeader username and password are also accepted forms of login.
+- enable a proxy through to backend apache server to allow for CGI code to interface with WS.   http://j2ep.sourceforge.net/
+-- needs to take credentials and insert them as HTTP headers sent to CGI.  CGI then can include those as part of the request to the web services before returning a response.
+-- could make tiles that in turn call the cgi using c:import or iframes
+
+- screenscraper/data sucker that pulls info from CPT
+-- use anonymous web proxies to make http client requests to grab the data so that the requests are sparsely sent (http://www.ibm.com/developerworks/java/library/j-cb08016/)
+-- pull at pseudorandom intervals if necessary, using standard client id strings
+-- http://www.checkpointtracker.com/teams?format=xml
+   http://www.checkpointtracker.com/teams/index/A?format=xml
+   http://www.checkpointtracker.com/teams/13?format=xml
+   http://www.checkpointtracker.com/companies?format=xml
+   http://www.checkpointtracker.com/companies/38?format=xml
+   http://www.checkpointtracker.com/squads/414?format=xml
+   http://www.checkpointtracker.com/leaderboards/2/1?format=xml
+
+- at the least, each time this team visits a CP, notify by blasting out but also calculate rank.
+- at extremely verbose level, after any team CP_Visit moves their rank, notify how it changed their rank.  this means analyzing the board before and after and notifying.
+- enable "vote to win", whereby users may vote on what teams they expect to fall back, go forward, etc.  these votes can be displayed or even the leaderboard sorted based on them.
+modify leaderboard display form to show what changed in the last hour/hours/whatever, show teams and placement changes, show cp punch list in pane, etc.
+email lists based on competitors
+rollovers if CP_Visits on leaderboard could create DIV layer showing blogs about the team at that CP.
+show upcoming event list by db start date; possible add display event tag.
+on add cp form, have toDiscipline set to value of fromDiscipline upon fromDiscipline edit.
+write web service to export CPVisit CRUD (with credentials), list events, list course, list cps, list teams.
+- look to Spring 3.0 MVC to implement REST based web services:  http://blog.springsource.com/2009/03/08/rest-in-spring-3-mvc/
+blackberry app that takes login credentials, and a cp id.  pulls team list for course, and as you click the team through a CPVisit is sent off to the leaderboard.  same for iphone.
+
+facebook comments box
+facebook live stream box for conversation about an event live
+
+
+test scenarios:
+---------------
+- the following comparator types in ChainComparator work:
+-- missedcutoff
+-- unofficial
+-- incomplete
+-- withdrawn
+-- mandatorycps
+-- optionalcps
+-- cpweight
+-- leastskippedmandatorycps
+-- leastskippedweight
+
+- CpVisit listing per team/Cp sort properly when:
+-- CpVisit has departure time but not arrival time
+-- CpVisit has arrival time but not departure time
+-- CpVisit has neither arrival time nor departure time?

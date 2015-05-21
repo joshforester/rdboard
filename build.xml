@@ -1,0 +1,428 @@
+<project name="Leaderboard" basedir="./" default="all">
+
+    <!-- some build parameters -->
+    <property name="home.dir" value="/home/josh" />
+
+    <!-- Configure properties to access the Manager application -->
+    <property name="manager.url" value="http://localhost:8080/manager"/>
+    <property name="manager.username" value="leaderboard"/>
+    <property name="manager.password" value="1337erboard"/>
+
+    <!-- Local system paths -->
+    <property name="jsp.jar" value="${home.dir}/apache-tomcat-6.0.20/lib/jsp-api.jar"/>
+    <property name="servlet.jar" value="${home.dir}/apache-tomcat-6.0.20/lib/servlet-api.jar"/>
+    <property name="jdbc.jar" value="${home.dir}/spring/leaderboard/src/lib/mysql-connector-java-5.1.9-bin.jar"/>
+<!--
+    <property name="el.jar" value="${home.dir}/apache-tomcat-6.0.20/lib/el-api.jar"/>
+-->
+    <property name="log4j.jar" value="${home.dir}/spring/leaderboard/src/lib/log4j-1.2.15.jar"/>
+    <property name="distpath.project" value="${home.dir}/apache-tomcat-6.0.20/webapps"/>
+    <property name="catalina.bin" value="${home.dir}/apache-tomcat-6.0.20/bin"/>
+
+
+    <!-- Project settings -->
+    <property name="project.title" value="Leaderboard"/>
+    <property name="project.distname" value="r"/>
+    <property name="project.version" value="0.1"/>
+
+
+    <!-- Path settings -->
+    <property name="doc.path" value="./src/doc/api"/>
+    <property name="doc.src" value="./src/java"/>
+
+    <!-- Dependency Versions -->
+    <property name="spring.version" value="3.0.3.RELEASE"/>
+
+
+    <path id="compile.classpath">
+        <pathelement path="classes"/>
+	<!--
+	<pathelement path="src/lib/antlr-2.7.6.jar"/>
+	-->
+	<pathelement path="${home.dir}/tomcat/lib/catalina-ant.jar"/>
+        <pathelement path="src/lib/commons-collections.jar"/>
+        <pathelement path="src/lib/commons-dbcp-1.2.2.jar"/>
+        <pathelement path="src/lib/commons-lang.jar"/>
+        <pathelement path="src/lib/commons-beanutils-1.8.0.jar"/>
+        <pathelement path="src/lib/commons-digester-2.0.jar"/>
+        <pathelement path="src/lib/commons-logging-1.1.1.jar"/>
+        <pathelement path="src/lib/commons-pool.jar"/>
+	<pathelement path="src/lib/commons-codec-1.4.jar"/>
+        <pathelement path="src/lib/ibatis-2.3.4.726.jar"/>
+	<!--
+        <pathelement path="lib/jdbc2_0-stdext.jar"/>
+	-->
+        <pathelement path="src/lib/jstl.jar"/>
+	<pathelement path="src/lib/mysql.jar"/>
+
+	<!-- Spring -->
+	<pathelement path="src/lib/org.springframework.aop-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.asm-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.aspects-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.beans-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.context-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.context.support-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.core-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.expression-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.instrument-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.instrument.tomcat-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.jdbc-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.jms-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.orm-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.oxm-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.test-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.transaction-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.web-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.web.portlet-${spring.version}.jar"/>
+	<pathelement path="src/lib/org.springframework.web.servlet-${spring.version}.jar"/>
+	<pathelement path="src/lib/aspectjweaver.jar"/> 
+	<pathelement path="src/lib/aopalliance.jar"/> 
+
+	<!-- HttpClient -->
+	<pathelement path="src/lib/httpcore-4.0.1.jar"/> 
+	<pathelement path="src/lib/httpmime-4.0.1.jar"/> 
+	<pathelement path="src/lib/httpclient-4.0.1.jar"/> 
+	<pathelement path="src/lib/apache-mime4j-0.6.jar"/> 
+
+	<!-- Spring webflow -->
+	<pathelement path="src/lib/org.springframework.webflow-2.0.7.RELEASE.jar"/>
+	<pathelement path="src/lib/org.springframework.binding-2.0.7.RELEASE.jar"/>	
+	<pathelement path="src/lib/org.springframework.js-2.0.7.RELEASE.jar"/>
+
+	<!-- Spring security -->
+	<pathelement path="src/lib/spring-security-acl-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-cas-client-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-config-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-core-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-ldap-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-openid-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-taglibs-3.0.0.RC2.jar"/>
+	<pathelement path="src/lib/spring-security-web-3.0.0.RC2.jar"/>
+	
+	<!-- xStream support -->
+	<pathelement path="src/lib/xstream-1.3.1.jar"/>
+	<pathelement path="src/lib/xpp3_min-1.1.4c.jar"/>
+	<pathelement path="src/lib/cglib-nodep-2.2.jar"/>
+	<pathelement path="src/lib/dom4j-1.6.1.jar"/>
+	<pathelement path="src/lib/jdom-1.1.jar"/>
+	<pathelement path="src/lib/jettison-1.0.1.jar"/>
+	<pathelement path="src/lib/joda-time-1.6.jar"/>
+	<pathelement path="src/lib/stax-1.2.0.jar"/>
+	<pathelement path="src/lib/stax-api-1.0.1.jar"/>
+	<pathelement path="src/lib/wstx-asl-3.2.7.jar"/>
+	<pathelement path="src/lib/xml-writer-0.2.jar"/>
+	<pathelement path="src/lib/xom-1.1.jar"/>
+	<pathelement path="src/lib/xstream-benchmark-1.3.1.jar"/>
+
+	<!-- Jackson support -->
+	<pathelement path="src/lib/jackson-core-asl-1.3.2.jar"/>
+	<pathelement path="src/lib/jackson-mapper-asl-1.3.2.jar"/>
+
+	<pathelement path="src/lib/ognl-2.6.9.jar"/>
+	<pathelement path="src/lib/standard.jar"/>
+	<pathelement path="src/lib/taglibs-log.jar"/>
+	<pathelement path="src/lib/taglibs-string.jar"/>
+	<pathelement path="src/lib/tiles-api-2.1.4.jar"/>
+	<pathelement path="src/lib/tiles-compat-2.1.4.jar"/>
+	<pathelement path="src/lib/tiles-core-2.1.4.jar"/>
+	<pathelement path="src/lib/tiles-jsp-2.1.4.jar"/>
+	<!-- <pathelement path="src/lib/tiles-portlet-2.1.4.jar"/> -->
+	<pathelement path="src/lib/tiles-servlet-2.1.4.jar"/>
+	<pathelement path="src/lib/mail.jar"/>
+	<pathelement path="src/lib/openmap-4.6.5.jar"/>
+	<pathelement path="src/lib/pwdstr.jar"/>
+   <!--
+	<pathelement path="${el.jar}"/>
+-->
+        <pathelement path="${log4j.jar}"/>
+        <pathelement path="${jdbc.jar}"/>
+        <pathelement path="${jsp.jar}"/>
+        <pathelement path="${servlet.jar}"/>
+        <pathelement path="${classpath}"/>
+    </path>
+
+
+    <!-- Configure the custom Ant tasks for the Tomcat Manager application -->
+    <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"/>
+    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask"/>
+    <taskdef name="start" classname="org.apache.catalina.ant.StartTask"/>
+    <taskdef name="stop" classname="org.apache.catalina.ant.StopTask"/>
+    <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
+    <taskdef name="list" classname="org.apache.catalina.ant.ListTask"/>
+
+
+    <!-- Check timestamp on files -->
+    <target name="prepare">
+        <tstamp/>
+    </target>
+
+
+    <!-- Copy any resource or configuration files -->
+    <target name="resources">
+        <copy todir="target/WEB-INF/classes/resources" includeEmptyDirs="no">
+            <fileset dir="src/resources">
+            <patternset>
+                <include name="*.conf"/>
+                <include name="*.properties"/>
+                <include name="*.xml"/>
+		<exclude name="leaderboard-servlet.xml"/>
+		<exclude name="web.xml"/>
+		<exclude name="context.xml"/>
+		<exclude name="applicationContext.xml"/>
+		<exclude name="tiles-defs.xml"/>
+		<exclude name="*-flow.xml"/>
+            </patternset>
+            </fileset>
+        </copy>
+        <copy todir="target/WEB-INF/classes" includeEmptyDirs="no">
+            <fileset dir="src/resources">
+            <patternset>
+                <include name="log4j.properties"/>
+            </patternset>
+            </fileset>
+        </copy>
+        <copy todir="target/WEB-INF" includeEmptyDirs="no">
+            <fileset dir="src/resources">
+            <patternset>
+                <include name="*.xml"/>
+                <include name="*.dtd"/>
+		<exclude name="context.xml"/>
+            </patternset>
+            </fileset>
+        </copy>
+        <copy todir="target/META-INF" includeEmptyDirs="no">
+            <fileset dir="src/resources">
+            <patternset>
+                <include name="context.xml"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any css -->
+    <target name="styles">
+        <copy todir="target" includeEmptyDirs="no">
+            <fileset dir="src/styles">
+            <patternset>
+                <include name="*.css"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any javascript -->
+    <target name="js">
+        <copy todir="target/js" includeEmptyDirs="no">
+            <fileset dir="src/js">
+            <patternset>
+                <include name="*.js"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any 3rd party libraries -->
+    <target name="jars">
+        <copy todir="target/WEB-INF/lib" includeEmptyDirs="no">
+            <fileset dir="src/lib">
+            <patternset>
+                <include name="*.jar"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any taglib descriptor files -->
+    <target name="tags">
+        <copy todir="target/WEB-INF" includeEmptyDirs="no">
+            <fileset dir="src/tags">
+            <patternset>
+                <include name="*.tld"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any jsp pages -->
+    <target name="views">
+        <copy todir="target/views" includeEmptyDirs="no">
+            <fileset dir="src/views">
+            <patternset>
+                <include name="*.jsp"/>
+		<exclude name="index.jsp"/>
+            </patternset>
+            </fileset>
+        </copy>
+        <copy todir="target" includeEmptyDirs="no">
+            <fileset dir="src/views">
+            <patternset>
+                <include name="index.jsp"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any images -->
+    <target name="images">
+        <copy todir="target/images" includeEmptyDirs="no">
+            <fileset dir="src/images">
+            <patternset>
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+            </patternset>
+            </fileset>
+        </copy>
+        <copy todir="target" includeEmptyDirs="no">
+            <fileset dir="src/images">
+            <patternset>
+                <include name="favicon.ico"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Copy any third party content/apps -->
+    <target name="tp">
+        <copy todir="target/tp" includeEmptyDirs="no">
+            <fileset dir="src/tp">
+            <patternset>
+                <include name="**"/>
+            </patternset>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Normal build of application -->
+    <target name="compile" depends="prepare,resources,styles,js,jars,tags,views,images,tp">
+        <javac srcdir="src/java" destdir="target/WEB-INF/classes" debug="on" deprecation="on">
+            <classpath refid="compile.classpath"/>
+            <!-- Enables warnings for Enumerations -->
+            <!-- <compilerarg value="-Xlint:unchecked"/> -->
+        </javac>
+    </target>
+
+
+    <!-- Remove classes directory for clean build -->
+    <target name="clean"
+      description="Prepare for clean build">
+	<delete dir="target"/>
+	<mkdir  dir="target"/>
+	<mkdir  dir="target/WEB-INF"/>
+	<mkdir  dir="target/WEB-INF/classes"/>
+	<mkdir  dir="target/WEB-INF/classes/resources"/>
+	<mkdir  dir="target/WEB-INF/lib"/>
+	<mkdir  dir="target/META-INF"/>
+	<mkdir  dir="target/views"/>
+	<mkdir  dir="target/images"/>
+	<mkdir  dir="target/tp"/>
+	<mkdir  dir="target/js"/>
+	<mkdir  dir="target/docs" />
+	<mkdir  dir="target/docs/api" />
+    </target>
+
+
+    <!-- Build Javadoc documentation -->
+    <target name="javadoc"
+     description="Generate JavaDoc API docs">
+        <delete dir="target/docs/api"/>
+        <mkdir dir="target/docs/api"/>
+        <javadoc sourcepath="src/java"
+            destdir="target/docs/api"
+            classpath="${servlet.jar}:${jdbc.jar}:${log4j.jar}"
+            packagenames="*"
+            author="true"
+            private="true"
+            version="true"
+            windowtitle="${project.title} API Documentation"
+            doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+            bottom="Copyright &#169; 2007">
+            <classpath refid="compile.classpath"/>
+        </javadoc>
+    </target>
+
+
+    <!-- Build entire project -->
+    <target name="project" depends="cproject,javadoc"/>
+
+    <!-- Compile entire project -->
+    <target name="cproject" depends="clean,prepare,compile"/>
+
+
+    <!-- Create binary distribution -->
+    <target name="dist"
+        description="Create binary distribution">
+
+      <mkdir
+        dir="${distpath.project}"/>
+
+      <war
+        basedir="target"
+        warfile="${distpath.project}/${project.distname}.war"
+        webxml="target/WEB-INF/web.xml">
+<!--        <exclude name="WEB-INF/lib/jsp-api.jar"/>
+        <exclude name="WEB-INF/lib/servlet-api.jar"/> -->
+        <exclude name="${distpath.project}/${project.distname}.war"/>
+      </war>
+
+<!--
+      <unwar src="${distpath.project}/${project.distname}.war" dest="${distpath.project}/${project.distname}"/>
+-->
+
+      <!--
+      <reload  url="${manager.url}" username="${manager.username}" password="${manager.password}" path="/${project.distname}"/>
+      -->
+
+      <!--
+      <delete dir="${distpath.project}/${project.distname}"/>
+      <exec executable="${catalina.bin}/shutdown.sh"/>
+      <sleep seconds="4"/>
+      <exec executable="${catalina.bin}/startup.sh"/>
+      -->
+    </target>
+
+    <target name="stop"
+        description="Stop MyRunning.com in Tomcat">
+      <stop url="${manager.url}" username="${manager.username}" password="${manager.password}" path="/${project.distname}"/>
+    </target>
+
+    <target name="start"
+        description="Start MyRunning.com in Tomcat">
+      <start url="${manager.url}" username="${manager.username}" password="${manager.password}" path="/${project.distname}"/>
+    </target>
+
+    <target name="list"
+        description="List Tomcat Applications">
+      <list url="${manager.url}" username="${manager.username}" password="${manager.password}"/>
+    </target>
+
+    <target name="undeploy"
+        description="Undeploy MyRunning.com in Tomcat">
+      <stop url="${manager.url}" username="${manager.username}" password="${manager.password}" path="/${project.distname}"/>
+    </target>
+
+    <!-- For initial deployment -->
+    <target name="init" depends="cproject,dist"/>
+
+    <!-- For updating in-distribution-path files for quick testing -->
+    <target name="restart" depends="stop,start"/>
+
+    <!-- For updating non-java source files -->
+    <target name="configs" depends="prepare,resources,styles,js,tags,views,images,tp,stop,undeploy,dist,start"/>
+
+    <!-- For building project when it won't start in Tomcat -->
+    <target name="broken" depends="cproject,undeploy,dist,start"/>
+
+    <!-- Build project and create distribution-->
+    <target name="all" depends="cproject,stop,undeploy,dist,start"/>
+
+</project>
+

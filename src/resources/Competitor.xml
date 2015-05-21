@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Competitor">
+
+  <typeAlias alias="personIdAndCourseIdQuery" type="com.myrunning.leaderboard.db.dao.query.PersonIdAndCourseIdQuery"/>
+  <typeAlias alias="competitor" type="com.myrunning.leaderboard.model.Competitor"/>
+
+  <resultMap id="competitorResult" class="competitor">
+    <result property="id" column="id" />
+    <result property="identityId" column="identity_id" />
+    <result property="personId" column="person_id" />
+    <result property="email" column="email" />
+    <result property="firstName" column="first_name" />
+    <result property="lastName" column="last_name" />
+    <result property="city" column="city" />
+    <result property="region" column="region" />
+    <result property="country" column="country" />
+    <result property="zip" column="zip" />
+    <result property="gender" column="gender" />
+    <result property="birthday" column="birthday" />
+    <result property="homePhone" column="home_phone" />
+    <result property="cellPhone" column="cell_phone" />
+    <result property="workPhone" column="work_phone" />
+    <result property="defaultEmergencyContactFirstName" column="default_emergency_contact_first_name" />
+    <result property="defaultEmergencyContactLastName" column="default_emergency_contact_last_name" />
+    <result property="defaultEmergencyContactRelation" column="default_emergency_contact_relation" />
+    <result property="defaultEmergencyPhone" column="default_emergency_phone" />
+    <result property="defaultShirtSize" column="default_shirt_size" />
+    <result property="defaultShoeSize" column="default_shoe_size" />
+    <result property="occupation" column="occupation" />
+    <result property="selfDescription" column="self_description" />
+    <result property="hobbiesInterests" column="hobbies_interests" />
+    <result property="favoriteQuote" column="favorite_quote" />
+    <result property="favoriteThings" column="favorite_things" />
+    <result property="website" column="website" />
+    <result property="isDisabled" column="is_disabled" />
+    <result property="emergencyContactFirstName" column="emergency_contact_first_name" />
+    <result property="emergencyContactLastName" column="emergency_contact_last_name" />
+    <result property="emergencyContactRelation" column="emergency_contact_relation" />
+    <result property="emergencyPhone" column="emergency_phone" />
+    <result property="shirtSize" column="shirt_size" />
+    <result property="shoeSize" column="shoe_size" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <!-- 
+       NOTE that since PERSON and COMPETITOR both have ID fields, and 
+       we're really interested in getting the COMPETITOR.id returned in the result
+       map, we need to ensure that it is SELECT c.*, p.* instead of SELECT p.*, c.*
+    -->
+
+  <select id="getCompetitorById" resultMap="competitorResult" parameterClass="string">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c
+    WHERE c.id = #value#
+      AND p.id = c.person_id
+  </select>
+
+  <select id="getCompetitorByEmail" resultMap="competitorResult" parameterClass="string">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c
+    WHERE p.email = #value#
+      AND p.id = c.person_id
+  </select>
+
+  <select id="getCompetitorByPersonIdAndCourseId" resultMap="competitorResult" parameterClass="personIdAndCourseIdQuery">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c, TEAM t, Team_Instance_Rel tir
+    WHERE p.id = #personId#
+      AND p.id = c.person_id
+      AND c.id = tir.competitor_id
+      AND tir.team_id = t.id
+      AND t.course_id = #courseId#
+  </select>
+
+  <select id="getCompetitorByTraits" resultMap="competitorResult" parameterClass="competitor">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c
+    WHERE p.first_name = #firstName#
+      AND p.last_name = #lastName#
+      AND p.city = #city#
+      AND p.region = #region#
+      AND p.country = #country#
+      AND p.zip = #zip#
+      AND p.gender = #gender#
+      AND p.birthday = #birthday#
+      AND p.id = c.person_id
+  </select>
+
+  <select id="getCompetitorsByPersonId" resultMap="competitorResult" parameterClass="string">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c
+    WHERE p.id = #value#
+      AND p.id = c.person_id
+  </select>
+
+  <select id="getAllCompetitors" resultMap="competitorResult">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c
+    WHERE p.id = c.person_id
+  </select>
+
+  <select id="getCompetitorsByTeamId" resultMap="competitorResult" parameterClass="string">
+    SELECT c.*, p.*
+    FROM PERSON p, COMPETITOR c, Team_Instance_Rel tir
+    WHERE tir.team_id = #value#
+      AND c.id = tir.competitor_id
+      AND p.id = c.person_id
+  </select>
+
+  <update id="updateCompetitor" parameterClass="competitor">
+    UPDATE COMPETITOR
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="personId">person_id = #personId#</isNotNull>
+      <isNotNull prepend=", " property="emergencyContactFirstName">emergency_contact_first_name = #emergencyContactFirstName#</isNotNull>
+      <isNotNull prepend=", " property="emergencyContactLastName">emergency_contact_last_name = #emergencyContactLastName#</isNotNull>
+      <isNotNull prepend=", " property="emergencyContactRelation">emergency_contact_relation = #emergencyContactRelation#</isNotNull>
+      <isNotNull prepend=", " property="emergencyPhone">emergency_phone = #emergencyPhone#</isNotNull>
+      <isNotNull prepend=", " property="shirtSize">shirt_size = #shirtSize#</isNotNull>
+      <isNotNull prepend=", " property="shoeSize">shoe_size = #shoeSize#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertCompetitor" parameterClass="competitor">
+    INSERT INTO COMPETITOR (id, person_id, emergency_contact_first_name, emergency_contact_last_name, emergency_contact_relation, emergency_phone, shirt_size, shoe_size, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="personId">#personId#</isNotNull>
+      <isNull prepend=", " property="personId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="emergencyContactFirstName">#emergencyContactFirstName#</isNotNull>
+      <isNull prepend=", " property="emergencyContactFirstName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="emergencyContactLastName">#emergencyContactLastName#</isNotNull>
+      <isNull prepend=", " property="emergencyContactLastName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="emergencyContactRelation">#emergencyContactRelation#</isNotNull>
+      <isNull prepend=", " property="emergencyContactRelation">DEFAULT</isNull>
+      <isNotNull prepend=", " property="emergencyPhone">#emergencyPhone#</isNotNull>
+      <isNull prepend=", " property="emergencyPhone">DEFAULT</isNull>
+      <isNotNull prepend=", " property="shirtSize">#shirtSize#</isNotNull>
+      <isNull prepend=", " property="shirtSize">DEFAULT</isNull>
+      <isNotNull prepend=", " property="shoeSize">#shoeSize#</isNotNull>
+      <isNull prepend=", " property="shoeSize">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteCompetitorById" parameterClass="string">
+    DELETE
+    FROM COMPETITOR
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

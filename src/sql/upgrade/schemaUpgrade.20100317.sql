@@ -1,0 +1,1 @@
+ALTER TABLE CP ADD `heywhatsthat_id` VARCHAR(8)  DEFAULT 'default' AFTER `to_discipline`;

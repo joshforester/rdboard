@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="ControlPoint">
+
+  <typeAlias alias="courseIdAndNameQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndNameQuery"/>
+  <typeAlias alias="courseIdAndCpOrderQuery" type="com.myrunning.leaderboard.db.dao.query.CourseIdAndCpOrderQuery"/>
+  <typeAlias alias="controlPoint" type="com.myrunning.leaderboard.model.ControlPoint"/>
+
+  <resultMap id="controlPointResult" class="controlPoint">
+    <result property="id" column="id" />
+    <result property="courseId" column="course_id" />
+    <result property="cpOrder" column="cp_order" />
+    <result property="name" column="name" />
+    <result property="taName" column="ta_name" />
+    <result property="northernly" column="northernly" />
+    <result property="easternly" column="easternly" />
+    <result property="zoneNumber" column="zone_number" />
+    <result property="zoneChar" column="zone_char" />
+    <result property="hint" column="hint" />
+    <result property="altitude" column="altitude" />
+    <result property="cutoff" column="cutoff" />
+    <result property="isMandatory" column="is_mandatory" />
+    <result property="isInMandatoryGroup" column="is_in_mandatory_group" />
+    <result property="mandatoryGroupRequirement" column="mandatory_group_requirement" />
+    <result property="mandatoryGroupSize" column="mandatory_group_size" />
+    <result property="weight" column="weight" />
+    <result property="fromDiscipline" column="from_discipline" />
+    <result property="toDiscipline" column="to_discipline" />
+    <result property="heyWhatsThatId" column="heywhatsthat_id" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getControlPointById" resultMap="controlPointResult" parameterClass="string">
+    SELECT *
+    FROM CP
+    WHERE id = #value#
+  </select>
+
+  <select id="getControlPointByCourseIdAndName" resultMap="controlPointResult" parameterClass="courseIdAndNameQuery">
+    SELECT *
+    FROM CP
+    WHERE course_id = #courseId#
+      AND name = #name#
+  </select>
+
+  <select id="getControlPointByCourseIdAndCpOrder" resultMap="controlPointResult" parameterClass="courseIdAndCpOrderQuery">
+    SELECT *
+    FROM CP
+    WHERE course_id = #courseId#
+      AND cp_order = #cpOrder#
+  </select>
+
+  <select id="getMaxControlPointOrderByCourseId" resultClass="int" parameterClass="string">
+    SELECT MAX(cp_order) AS value
+    FROM CP
+    WHERE course_id = #value#
+  </select>
+
+  <!-- may not work as zone_number AS value is not the only column returned.  as such,
+       may need to nest it further into another select -->
+  <select id="getMostLikelyZoneNumberByCourseId" resultClass="int" parameterClass="string">
+    SELECT MAX(zone_number_count), zone_number AS value 
+    FROM (SELECT COUNT(zone_number) AS zone_number_count, zone_number FROM CP WHERE course_id = #value# GROUP BY zone_number) t
+  </select>
+
+  <!-- may not work as zone_number AS value is not the only column returned.  as such,
+       may need to nest it further into another select -->
+  <select id="getMostLikelyZoneCharByCourseId" resultClass="string" parameterClass="string">
+    SELECT MAX(zone_char_count), zone_char AS value 
+    FROM (SELECT COUNT(zone_char) AS zone_char_count, zone_char FROM CP WHERE course_id = #value# GROUP BY zone_char) t
+  </select>
+
+  <select id="getControlPointsByCourseId" resultMap="controlPointResult" parameterClass="string">
+    SELECT *
+    FROM CP
+    WHERE course_id = #value#
+  </select>
+
+  <update id="updateControlPoint" parameterClass="controlPoint">
+    UPDATE CP 
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="courseId">course_id = #courseId#</isNotNull>
+      <isNotNull prepend=", " property="cpOrder">cp_order = #cpOrder#</isNotNull>
+      <isNotNull prepend=", " property="name">name = #name#</isNotNull>
+      <isNotNull prepend=", " property="taName">ta_name = #taName#</isNotNull>
+      <isNotNull prepend=", " property="northernly">northernly = #northernly#</isNotNull>
+      <isNotNull prepend=", " property="easternly">easternly = #easternly#</isNotNull>
+      <isNotNull prepend=", " property="zoneNumber">zone_number = #zoneNumber#</isNotNull>
+      <isNotNull prepend=", " property="zoneChar">zone_char = #zoneChar#</isNotNull>
+      <isNotNull prepend=", " property="hint">hint = #hint#</isNotNull>
+      <isNotNull prepend=", " property="altitude">altitude = #altitude#</isNotNull>
+      <isNotNull prepend=", " property="cutoff">cutoff = #cutoff#</isNotNull>
+      <isNotNull prepend=", " property="isMandatory">is_mandatory = #isMandatory#</isNotNull>
+      <isNotNull prepend=", " property="isInMandatoryGroup">is_in_mandatory_group = #isInMandatoryGroup#</isNotNull>
+      <isNotNull prepend=", " property="mandatoryGroupRequirement">mandatory_group_requirement = #mandatoryGroupRequirement#</isNotNull>
+      <isNotNull prepend=", " property="mandatoryGroupSize">mandatory_group_size = #mandatoryGroupSize#</isNotNull>
+      <isNotNull prepend=", " property="weight">weight = #weight#</isNotNull>
+      <isNotNull prepend=", " property="fromDiscipline">from_discipline = #fromDiscipline#</isNotNull>
+      <isNotNull prepend=", " property="toDiscipline">to_discipline = #toDiscipline#</isNotNull>
+      <isNotNull prepend=", " property="heyWhatsThatId">heywhatsthat_id = #heyWhatsThatId#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertControlPoint" parameterClass="controlPoint">
+    INSERT INTO CP (id, course_id, cp_order, name, ta_name, northernly, easternly, zone_number, zone_char, hint, altitude, cutoff, is_mandatory, is_in_mandatory_group, mandatory_group_requirement, mandatory_group_size, weight, from_discipline, to_discipline, heywhatsthat_id, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="courseId">#courseId#</isNotNull>
+      <isNull prepend=", " property="courseId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cpOrder">#cpOrder#</isNotNull>
+      <isNull prepend=", " property="cpOrder">DEFAULT</isNull>
+      <isNotNull prepend=", " property="name">#name#</isNotNull>
+      <isNull prepend=", " property="name">DEFAULT</isNull>
+      <isNotNull prepend=", " property="taName">#taName#</isNotNull>
+      <isNull prepend=", " property="taName">DEFAULT</isNull>
+      <isNotNull prepend=", " property="northernly">#northernly#</isNotNull>
+      <isNull prepend=", " property="northernly">DEFAULT</isNull>
+      <isNotNull prepend=", " property="easternly">#easternly#</isNotNull>
+      <isNull prepend=", " property="easternly">DEFAULT</isNull>
+      <isNotNull prepend=", " property="zoneNumber">#zoneNumber#</isNotNull>
+      <isNull prepend=", " property="zoneNumber">DEFAULT</isNull>
+      <isNotNull prepend=", " property="zoneChar">#zoneChar#</isNotNull>
+      <isNull prepend=", " property="zoneChar">DEFAULT</isNull>
+      <isNotNull prepend=", " property="hint">#hint#</isNotNull>
+      <isNull prepend=", " property="hint">DEFAULT</isNull>
+      <isNotNull prepend=", " property="altitude">#altitude#</isNotNull>
+      <isNull prepend=", " property="altitude">DEFAULT</isNull>
+      <isNotNull prepend=", " property="cutoff">#cutoff#</isNotNull>
+      <isNull prepend=", " property="cutoff">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isMandatory">#isMandatory#</isNotNull>
+      <isNull prepend=", " property="isMandatory">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isInMandatoryGroup">#isInMandatoryGroup#</isNotNull>
+      <isNull prepend=", " property="isInMandatoryGroup">DEFAULT</isNull>
+      <isNotNull prepend=", " property="mandatoryGroupRequirement">#mandatoryGroupRequirement#</isNotNull>
+      <isNull prepend=", " property="mandatoryGroupRequirement">DEFAULT</isNull>
+      <isNotNull prepend=", " property="mandatoryGroupSize">#mandatoryGroupSize#</isNotNull>
+      <isNull prepend=", " property="mandatoryGroupSize">DEFAULT</isNull>
+      <isNotNull prepend=", " property="weight">#weight#</isNotNull>
+      <isNull prepend=", " property="weight">DEFAULT</isNull>
+      <isNotNull prepend=", " property="fromDiscipline">#fromDiscipline#</isNotNull>
+      <isNull prepend=", " property="fromDiscipline">DEFAULT</isNull>
+      <isNotNull prepend=", " property="toDiscipline">#toDiscipline#</isNotNull>
+      <isNull prepend=", " property="toDiscipline">DEFAULT</isNull>
+      <isNotNull prepend=", " property="heyWhatsThatId">#heyWhatsThatId#</isNotNull>
+      <isNull prepend=", " property="heyWhatsThatId">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteControlPointById" parameterClass="string">
+    DELETE
+    FROM CP
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

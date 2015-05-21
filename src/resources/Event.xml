@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Event">
+
+  <typeAlias alias="event" type="com.myrunning.leaderboard.model.Event"/>
+
+  <resultMap id="eventResult" class="event">
+    <result property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="startTime" column="start_time" />
+    <result property="endTime" column="end_time" />
+    <result property="city" column="city" />
+    <result property="region" column="region" />
+    <result property="country" column="country" />
+    <result property="zip" column="zip" />
+    <result property="eventUrl" column="event_url" />
+    <result property="eventCaption" column="event_caption" />
+    <result property="sponsorWebsite" column="sponsor_website" />
+    <result property="sponsorUrl" column="sponsor_url" />
+    <result property="sponsorTitle" column="sponsor_title" />
+    <result property="sponsorCaption" column="sponsor_caption" />
+    <result property="sponsorDescription" column="sponsor_description" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getAllEvents" resultMap="eventResult">
+    SELECT *
+    FROM EVENT
+    ORDER BY name ASC
+  </select>
+
+  <select id="getEventById" resultMap="eventResult" parameterClass="string">
+    SELECT *
+    FROM EVENT
+    WHERE id = #value#
+  </select>
+
+  <select id="getEventByCourseId" resultMap="eventResult" parameterClass="string">
+    SELECT e.*
+    FROM EVENT e, COURSE c
+    WHERE c.id = #value#
+      AND c.event_id = e.id
+  </select>
+
+  <select id="getEventByName" resultMap="eventResult" parameterClass="string">
+    SELECT *
+    FROM EVENT
+    WHERE name = #value#
+  </select>
+
+  <update id="updateEvent" parameterClass="event">
+    UPDATE EVENT
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="name">name = #name#</isNotNull>
+      <isNotNull prepend=", " property="startTime">start_time = #startTime#</isNotNull>
+      <isNotNull prepend=", " property="endTime">end_time = #endTime#</isNotNull>
+      <isNotNull prepend=", " property="city">city = #city#</isNotNull>
+      <isNotNull prepend=", " property="region">region = #region#</isNotNull>
+      <isNotNull prepend=", " property="country">country = #country#</isNotNull>
+      <isNotNull prepend=", " property="zip">zip = #zip#</isNotNull>
+      <isNotNull prepend=", " property="eventUrl">event_url = #eventUrl#</isNotNull>
+      <isNotNull prepend=", " property="eventCaption">event_caption = #eventCaption#</isNotNull>
+      <isNotNull prepend=", " property="sponsorWebsite">sponsor_website = #sponsorWebsite#</isNotNull>
+      <isNotNull prepend=", " property="sponsorUrl">sponsor_url = #sponsorUrl#</isNotNull>
+      <isNotNull prepend=", " property="sponsorTitle">sponsor_title = #sponsorTitle#</isNotNull>
+      <isNotNull prepend=", " property="sponsorCaption">sponsor_caption = #sponsorCaption#</isNotNull>
+      <isNotNull prepend=", " property="sponsorDescription">sponsor_description = #sponsorDescription#</isNotNull>
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertEvent" parameterClass="event">
+    INSERT INTO EVENT (id, name, start_time, end_time, city, region, country, zip, event_url, event_caption, sponsor_website, sponsor_url, sponsor_title, sponsor_caption, sponsor_description, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="name">#name#</isNotNull>
+      <isNull prepend=", " property="name">DEFAULT</isNull>
+      <isNotNull prepend=", " property="startTime">#startTime#</isNotNull>
+      <isNull prepend=", " property="startTime">DEFAULT</isNull>
+      <isNotNull prepend=", " property="endTime">#endTime#</isNotNull>
+      <isNull prepend=", " property="endTime">DEFAULT</isNull>
+      <isNotNull prepend=", " property="city">#city#</isNotNull>
+      <isNull prepend=", " property="city">DEFAULT</isNull>
+      <isNotNull prepend=", " property="region">#region#</isNotNull>
+      <isNull prepend=", " property="region">DEFAULT</isNull>
+      <isNotNull prepend=", " property="country">#country#</isNotNull>
+      <isNull prepend=", " property="country">DEFAULT</isNull>
+      <isNotNull prepend=", " property="zip">#zip#</isNotNull>
+      <isNull prepend=", " property="zip">DEFAULT</isNull>
+      <isNotNull prepend=", " property="eventUrl">#eventUrl#</isNotNull>
+      <isNull prepend=", " property="eventUrl">DEFAULT</isNull>
+      <isNotNull prepend=", " property="eventCaption">#eventCaption#</isNotNull>
+      <isNull prepend=", " property="eventCaption">DEFAULT</isNull>
+      <isNotNull prepend=", " property="sponsorWebsite">#sponsorWebsite#</isNotNull>
+      <isNull prepend=", " property="sponsorWebsite">DEFAULT</isNull>
+      <isNotNull prepend=", " property="sponsorUrl">#sponsorUrl#</isNotNull>
+      <isNull prepend=", " property="sponsorUrl">DEFAULT</isNull>
+      <isNotNull prepend=", " property="sponsorTitle">#sponsorTitle#</isNotNull>
+      <isNull prepend=", " property="sponsorTitle">DEFAULT</isNull>
+      <isNotNull prepend=", " property="sponsorCaption">#sponsorCaption#</isNotNull>
+      <isNull prepend=", " property="sponsorCaption">DEFAULT</isNull>
+      <isNotNull prepend=", " property="sponsorDescription">#sponsorDescription#</isNotNull>
+      <isNull prepend=", " property="sponsorDescription">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteEventById" parameterClass="string">
+    DELETE
+    FROM EVENT
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>

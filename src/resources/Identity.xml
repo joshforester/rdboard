@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC 
+	  "-//iBATIS.com//DTD SQL Map 2.0//EN" 
+	  "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Identity">
+
+  <typeAlias alias="identity" type="com.myrunning.leaderboard.model.Identity"/>
+
+  <resultMap id="identityResult" class="identity">
+    <result property="id" column="id" />
+    <result property="isDeleted" column="is_deleted" />
+  </resultMap>
+
+  <select id="getIdentityById" resultMap="identityResult" parameterClass="string">
+    SELECT *
+    FROM IDENTITY
+    WHERE id = #value#
+  </select>
+
+  <select id="getIdentityByPersonId" resultMap="identityResult" parameterClass="string">
+    SELECT i.*
+    FROM IDENTITY i, PERSON p
+    WHERE p.id = #value#
+      AND p.identity_id = i.id
+  </select>
+
+  <update id="updateIdentity" parameterClass="identity">
+    UPDATE IDENTITY
+    <dynamic prepend=" SET ">
+      <isNotNull prepend=", " property="isDeleted">is_deleted = #isDeleted#</isNotNull>
+    </dynamic>
+    WHERE id = #id#
+  </update>
+
+  <insert id="insertIdentity" parameterClass="identity">
+    INSERT INTO IDENTITY (id, is_deleted)
+    <dynamic prepend="VALUES (">
+      <isNotNull prepend=", " property="id">#id#</isNotNull>
+      <isNull prepend=", " property="id">DEFAULT</isNull>
+      <isNotNull prepend=", " property="isDeleted">#isDeleted#</isNotNull>
+      <isNull prepend=", " property="isDeleted">DEFAULT</isNull>
+      )
+    </dynamic>
+  </insert>
+
+  <delete id="deleteIdentityById" parameterClass="string">
+    DELETE
+    FROM IDENTITY
+    WHERE id = #value#
+  </delete>
+
+</sqlMap>
